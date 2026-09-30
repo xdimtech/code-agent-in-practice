@@ -60,7 +60,7 @@ pi 的官方手册有 718 行，写得不差。这本书要补的是它不会写
 │   ├── 03-policy-layer/    第三部分 补齐策略层
 │   ├── 04-shipping/        第四部分 交付
 │   ├── 05-internals/       第五部分 原理
-│   ├── 06-four-vendors/    第六部分 厂商全景
+│   ├── 06-vendors/         第六部分 厂商全景
 │   └── appendix/
 ├── examples/           # 可运行代码，目录名对应章号
 └── research/           # 研究底稿（证据层）

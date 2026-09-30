@@ -50,7 +50,7 @@
 | 8 | 可观测性 |
 | 9 | 评估、风险与建议 |
 
-**与三家衍生方不同，本仓库不需要先与 pi 做 diff** —— 没有 diff 可做。它要做的是**独立解法的平行记述**，然后在第 35 章与 pi 系放在一张表里对照。
+**与三家衍生方不同，本仓库不需要先与 pi 做 diff** —— 没有 diff 可做。它要做的是**独立解法的平行记述**，然后在第 36 章与 pi 系放在一张表里对照。
 
 对照用的探针清单见 [`../pi/09-assessment-risks-recommendations.md`](../pi/09-assessment-risks-recommendations.md) 附录 A–H。逐项回答同一批问题，才能进同一张表。
 
@@ -61,6 +61,6 @@
 ## 阻塞了哪些正文
 
 - 第三部分（第 16–21 章）各章 `X.2` 表格的对照组行
-- [第 34 章](../../book/06-four-vendors/ch34-deepseek.md)、[第 35 章](../../book/06-four-vendors/ch35-comparison.md)、[第 36 章](../../book/06-four-vendors/ch36-lessons.md)
+- [第 34 章](../../book/06-vendors/ch34-deepseek.md)、[第 36 章](../../book/06-vendors/ch36-comparison.md)、[第 37 章](../../book/06-vendors/ch37-lessons.md)
 
 产出流程见 [CONTRIBUTING](../../CONTRIBUTING.md#研究底稿的产出流程)。

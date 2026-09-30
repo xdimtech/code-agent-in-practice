@@ -69,12 +69,13 @@
 
 ## 第六部分 · 厂商全景：三家衍生 + 两个对照
 
-- [第 31 章 阶跃星辰：Step-Code / step-harness](./book/06-four-vendors/ch31-step.md)
-- [第 32 章 MiniMax：minimax-code](./book/06-four-vendors/ch32-minimax.md)
-- [第 33 章 月之暗面：kimi-code](./book/06-four-vendors/ch33-kimi.md)
-- [第 34 章 DeepSeek：deepseek-harness（对照组）](./book/06-four-vendors/ch34-deepseek.md)
-- [第 35 章 横向对照总表](./book/06-four-vendors/ch35-comparison.md)
-- [第 36 章 从各家的选择里能学到什么](./book/06-four-vendors/ch36-lessons.md)
+- [第 31 章 阶跃星辰：Step-Code / step-harness](./book/06-vendors/ch31-step.md)
+- [第 32 章 MiniMax：minimax-code](./book/06-vendors/ch32-minimax.md)
+- [第 33 章 月之暗面：kimi-code](./book/06-vendors/ch33-kimi.md)
+- [第 34 章 DeepSeek：deepseek-harness（对照组）](./book/06-vendors/ch34-deepseek.md)
+- [第 35 章 智谱：ZCode（对照组）](./book/06-vendors/ch35-zcode.md)
+- [第 36 章 横向对照总表](./book/06-vendors/ch36-comparison.md)
+- [第 37 章 从各家的选择里能学到什么](./book/06-vendors/ch37-lessons.md)
 
 ---
 
