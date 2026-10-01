@@ -15,4 +15,11 @@ examples/ch10-first-tool/
 
 本目录下代码采用 [MIT](https://github.com/xdimtech/code-agent-in-practice/blob/main/examples/LICENSE)（与正文的 CC BY-SA 4.0 不同，方便你直接抄进自己的项目）。
 
-> 骨架期：尚无例子。第一批将随第二部分（第 7–14 章）落地。
+## 目录
+
+| 目录 | 对应章节 | 内容 |
+| --- | --- | --- |
+| [`ch26-minimal-loop/`](./ch26-minimal-loop/) | 第 26 章 | 按 pi 三层切分写的最小 Agent 循环，零依赖 |
+| [`ch29-tool-batch/`](./ch29-tool-batch/) | 第 29 章 | 工具批次执行与按字节安全截断，零依赖 |
+| [`ch30-durable-tools/`](./ch30-durable-tools/) | 第 30 章 | 意图—结算日志、重启恢复、replay 策略、损坏即拒绝，零依赖 |
+

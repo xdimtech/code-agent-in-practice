@@ -299,6 +299,8 @@ pi 在这三处的对应实现分别是：destructive-immediate 的 `drain()`（
 
 产品侧零接入：在 `packages/coding-agent/src/` 里 grep `SessionRepo|LaneRecord|RecordLog|harness/session` 零命中。
 
+> **勘误（写第 30 章时复核）**：`packages/coding-agent/src/server/create-harness.ts`（161 行，提交 `6fb2d766a`「add configurable Harness factory (#7686)」）import 了 `AgentHarness`，导出 `createCodingAgentHarness`。但除 `test/server/create-harness.test.ts` 外没有任何调用方——「产品侧零接入」的结论不变，「零引用」的说法不准确。另：v2 不是从零写起的脚手架。v0.79.1（2026-06-09）的 `agent-harness.ts` 有 1064 行、`prompt()` 可用；`44289550a`（2026-08-04，+1333/−9181）把它拆成了现在的脚手架。详见[第 30 章](../../book/05-internals/ch30-v2-runtime.md) 30.2 节。
+
 ### 这是有意为之，不是烂尾
 
 `packages/agent/CHANGELOG.md` 把意图写得很清楚：

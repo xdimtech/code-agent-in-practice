@@ -24,6 +24,7 @@ export default withMermaid(
     rewrites: {
       "research/:name/README.md": "research/:name/index.md",
       "examples/README.md": "examples/index.md",
+      "examples/:name/README.md": "examples/:name/index.md",
     },
 
     head: [

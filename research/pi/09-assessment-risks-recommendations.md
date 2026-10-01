@@ -116,7 +116,7 @@ CHANGELOG 明说这是有意的（"compile-complete scaffold … while durable e
 | # | v1（生效中） | v2（未接入） | 出处 |
 | --- | --- | --- | --- |
 | 1 | `coding-agent/core/compaction/` 1,012 行 | `agent/harness/compaction/` 848 行 | [§4.3](./04-context-engineering.md) |
-| 2 | `coding-agent/core/tools/truncate.ts` | `agent/harness/.../truncate.ts`（+153 行） | [§4.4](./04-context-engineering.md) |
+| 2 | `coding-agent/core/tools/truncate.ts` | `agent/harness/utils/truncate.ts`（276 → 350 行，+74） | [§4.4](./04-context-engineering.md) |
 | 3 | v1 工具形态 | `AgentHarnessTool` + `ExecutionEnv` 依赖倒置 | [§5.8](./05-tools-permissions.md) |
 | 4 | JSONL 会话树 v3 | sqlite-node 后端 + v4 JSONL，**两者都没人用** | [§8.4](./08-observability.md) |
 
@@ -126,7 +126,11 @@ CHANGELOG 明说这是有意的（"compile-complete scaffold … while durable e
 
 **但 v2 目前丢了 v1 的两道摘要护栏**（`stopReason === "length"` 视为失败、摘要里出现 toolCall 直接报错，[§4.3](./04-context-engineering.md)）。第一条与"截断即整体失效"是同一原则的两个实例——工具调用那边确立了，v1 压缩遵守了，v2 重写时丢了。标为推断是因为 v2 尚未接入，有可能只是还没写到。
 
+> **勘误（写第 30 章时复核）**：「丢了」不成立。两道护栏都是在 v2 压缩最后一次变更（`44289550a`，2026-08-04）**之后**才加进 v1 的：toolCall 护栏来自 `90305d90a`（2026-08-17），`getSummarizationFailure` 来自 `97fa14e39`（2026-08-24，#7048）。准确的说法是「v2 冻结后 v1 继续演化（10 次提交 vs 0 次），v2 没跟上」。另，规格 `docs/harness.md` 的恢复模型是寄存器（「No reducer exists to have a bug」，`:610`），与代码里的 `reducer.ts` 不一致。详见[第 30 章](../../book/05-internals/ch30-v2-runtime.md) 30.3、30.4 节。
+
 > **对下游的直接意义**：四个衍生仓库 vendor 的全部是 v1。他们 fork 的时间点上 v2 还是脚手架，所以他们的 diff 都建立在 `Agent` + `agentLoop` + JSONL 会话树之上。**未来如果 pi 切到 v2，它们的 diff 会集体失去上游基线。**
+>
+> **勘误**：「fork 时 v2 还是脚手架」对 `minimax-code` 不成立——它内嵌的 pi v0.79.1 早于 `44289550a`，其中的 `agent-harness.ts` 是那版能工作的 1064 行实现（与上游逐字节相同）。四家的产品代码确实都只用 v1（`third_party/` 之外引用 `AgentHarness` 的文件数为 0）。
 
 ---
 
@@ -190,7 +194,7 @@ pi 的诚实是它的价值，也是它的代价。**每一个把 pi 拿去做�
 3. **删掉 `first-time-setup.ts:74` 里那句 `/privacy`**，或把命令实现出来（失效承诺）；
 4. **接上 `shouldStopAfterTurn`，或在 README 明说 pi 没有循环上限**（让"留给宿主"这个解释在产品 CLI 上也成立）。
 
-另有两条中期的：给 telemetry 的 `sensitive` 字段配上运行时行为、或删掉它；给 v2 的压缩补回 v1 那两道护栏。
+另有两条中期的：给 telemetry 的 `sensitive` 字段配上运行时行为、或删掉它；在 v2 接线前，把 v1 压缩上新增的两道护栏同步到 v2（见 §9.4 勘误）。
 
 ---
 

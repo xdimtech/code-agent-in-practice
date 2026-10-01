@@ -1,0 +1,13 @@
+{
+  "name": "ch29-tool-batch",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 29 章：并行执行、按调用顺序落盘、全票终止、错误即结果、按字节安全截断（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/batch.test.ts src/truncate.test.ts"
+  }
+}

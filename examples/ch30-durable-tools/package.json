@@ -1,0 +1,13 @@
+{
+  "name": "ch30-durable-tools",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 30 章：意图—结算日志、重启恢复、replay 策略、损坏即拒绝（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/journal.test.ts src/recover.test.ts"
+  }
+}

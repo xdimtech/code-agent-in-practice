@@ -1,0 +1,13 @@
+{
+  "name": "ch26-minimal-loop",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 26 章：按 pi 三层切分写的最小 Agent 循环（零依赖，脚本化假模型）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/loop.test.ts"
+  }
+}

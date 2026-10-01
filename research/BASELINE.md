@@ -96,6 +96,18 @@ ZCode              ── 零接触
 
 完整拆解见 [`pi/`](./pi/)。
 
+### 行数怎么量
+
+正文里的「X 行」若指一个包或一个目录的源码规模，统一用下面的过滤：只算 git 跟踪的 `.ts`/`.tsx`，路径须含 `/src/`，排除测试（`*.test.*`、`*.spec.*`、`test/`、`tests/`）和 `examples/`。
+
+```bash
+git ls-files '<pkg>' | grep -Ei '\.(ts|tsx)$' | grep -v '\.test\.\|\.spec\.' \
+  | grep -vE '(^|/)tests?/' | grep -v '/examples/' | grep -E '/src/' \
+  | tr '\n' '\0' | xargs -0 wc -l | awk '$2!="total"{s+=$1} END{print s}'
+```
+
+单个文件的行数直接用 `wc -l`。
+
 ---
 
 ## 升级基准的流程

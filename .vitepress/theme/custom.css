@@ -181,6 +181,16 @@
   height: auto;
 }
 
+/* Mermaid 按 line-height 1.5 量节点高度；.vp-doc p 的行高更大，会裁掉多行标签的末行 */
+.vp-doc .mermaid foreignObject {
+  overflow: visible;
+}
+
+.vp-doc .mermaid foreignObject p {
+  margin: 0;
+  line-height: 1.5;
+}
+
 /* 图题：紧跟在图后的 *斜体* 段落 */
 .vp-doc .figure-caption,
 .vp-doc .mermaid + p > em:only-child {
