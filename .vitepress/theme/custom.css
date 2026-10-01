@@ -1,0 +1,241 @@
+/* 《Code Agent 实战》站点主题
+ *
+ * 取向：中文技术书的排版，不是营销页。正文要能长时间阅读，
+ * 代码块和表格是一等公民（全书大量行号引用与横向对照表）。
+ */
+
+:root {
+  --vp-c-brand-1: #0969da;
+  --vp-c-brand-2: #1f6feb;
+  --vp-c-brand-3: #388bfd;
+  --vp-c-brand-soft: rgba(31, 111, 235, 0.14);
+
+  --vp-font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI",
+    "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Noto Sans CJK SC",
+    Roboto, sans-serif;
+  --vp-font-family-mono: "SF Mono", "JetBrains Mono", "Fira Code", Menlo,
+    Consolas, "Courier New", monospace;
+
+  /* 正文宽度：中文全角字符更宽，默认 688px 一行装不下一个完整从句 */
+  --vp-layout-max-width: 1520px;
+  --book-content-width: 780px;
+}
+
+.dark {
+  --vp-c-brand-1: #58a6ff;
+  --vp-c-brand-2: #79c0ff;
+  --vp-c-brand-3: #a5d6ff;
+  --vp-c-brand-soft: rgba(88, 166, 255, 0.16);
+}
+
+/* ── 首页封面 ──
+ * 默认主题的 image-container 是为 320px 见方的图标准备的，封面是 2:3 的竖版，
+ * 绝对居中后会上下各溢出一截（压住导航栏、被 features 盖住）。这里把容器改成
+ * 封面自己的尺寸。
+ */
+
+.VPHero .image-src {
+  border-radius: 6px;
+  box-shadow: 0 18px 48px -12px rgba(2, 8, 20, 0.55),
+    0 2px 6px rgba(2, 8, 20, 0.25);
+}
+
+.VPHero .image-container {
+  transform: none;
+}
+
+/* 默认主题在封面后面放了一团模糊的圆形光晕，竖版封面用投影就够了 */
+.VPHero .image-bg {
+  display: none;
+}
+
+/* 竖版封面在窄屏上占满整屏，缩到能一眼看全的尺寸即可 */
+.VPHero .image-container {
+  width: 232px;
+  height: 348px;
+}
+
+.VPHero .image-src {
+  max-width: 232px;
+  max-height: 348px;
+}
+
+@media (min-width: 960px) {
+  .VPHero .image-container {
+    width: 340px;
+    height: 510px;
+  }
+
+  .VPHero .image-src {
+    max-width: 340px;
+    max-height: 510px;
+  }
+}
+
+.VPHero .name {
+  letter-spacing: 1px;
+}
+
+.VPHero .tagline {
+  line-height: 1.65;
+  max-width: 34em;
+}
+
+/* ── 正文排版 ── */
+
+.vp-doc {
+  max-width: var(--book-content-width);
+}
+
+.vp-doc p,
+.vp-doc li {
+  line-height: 1.82;
+  letter-spacing: 0.01em;
+}
+
+/* 章标题下的基准声明行（> 基准：pi ... ），压低视觉重量 */
+.vp-doc h1 + blockquote {
+  border-left-color: var(--vp-c-divider);
+  background: transparent;
+  padding: 0 0 0 14px;
+  margin: 12px 0 28px;
+  font-size: 13.5px;
+  color: var(--vp-c-text-3);
+}
+
+.vp-doc h1 + blockquote p {
+  line-height: 1.6;
+}
+
+.vp-doc h2 {
+  margin-top: 52px;
+  padding-top: 22px;
+  letter-spacing: 0.02em;
+}
+
+.vp-doc h3 {
+  margin-top: 36px;
+}
+
+/* ── 代码块：行号是刚需 ── */
+
+.vp-doc div[class*="language-"] {
+  border-radius: 6px;
+  margin: 20px 0;
+}
+
+.vp-doc [class*="language-"] code {
+  font-size: 13px;
+  line-height: 1.66;
+}
+
+.vp-doc [class*="language-"] > span.lang {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+}
+
+/* 行内 code：行号引用（`agent-loop.ts:252`）出现频率极高，要够显眼但不刺眼 */
+.vp-doc :not(pre) > code {
+  font-size: 0.875em;
+  padding: 2px 5px;
+  border-radius: 4px;
+  background-color: var(--vp-c-default-soft);
+  color: var(--vp-c-text-1);
+}
+
+/* ── 表格：横向对照表是全书主要载体之一 ── */
+
+.vp-doc table {
+  display: table;
+  width: 100%;
+  font-size: 14px;
+  margin: 22px 0;
+}
+
+.vp-doc th {
+  background-color: var(--vp-c-bg-soft);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.vp-doc td,
+.vp-doc th {
+  padding: 9px 13px;
+  line-height: 1.7;
+}
+
+/* 宽表允许横向滚动而不是压缩列 */
+.vp-doc .table-wrapper {
+  overflow-x: auto;
+}
+
+/* ── Mermaid 图 ── */
+
+.mermaid {
+  margin: 28px 0;
+  text-align: center;
+}
+
+.mermaid svg {
+  max-width: 100%;
+  height: auto;
+}
+
+/* 图题：紧跟在图后的 *斜体* 段落 */
+.vp-doc .figure-caption,
+.vp-doc .mermaid + p > em:only-child {
+  display: block;
+  text-align: center;
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+  font-style: normal;
+}
+
+/* ── 状态标记 ── */
+
+.vp-doc strong:first-child + em,
+.vp-doc .chapter-status {
+  font-size: 13px;
+  color: var(--vp-c-text-3);
+}
+
+/* ── 侧边栏：37 章 + 证据层，密度要够 ── */
+
+.VPSidebarItem.level-0 > .item > .text {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.VPSidebarItem.level-1 .link .text {
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+/* ── 打印：整本书直出 PDF ── */
+
+@media print {
+  .VPNav,
+  .VPSidebar,
+  .VPDocAside,
+  .VPFooter,
+  .VPDocFooter,
+  .VPLocalNav {
+    display: none !important;
+  }
+
+  .vp-doc {
+    max-width: 100%;
+  }
+
+  .vp-doc h1,
+  .vp-doc h2 {
+    break-after: avoid;
+  }
+
+  .vp-doc div[class*="language-"],
+  .vp-doc table,
+  .mermaid {
+    break-inside: avoid;
+  }
+}

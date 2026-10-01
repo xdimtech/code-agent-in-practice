@@ -30,7 +30,7 @@ DeepSeek 与智谱则是**自研内核**——它们在没有 pi 的前提下，
 
 两个对照组的角度还不一样。`deepseek-harness` 走到了插件化的另一个极端（Cordis DI 容器上 315 个包，`compaction`/`context`/`spill`/`guard`/`subagent` 各自成包），是对 pi「794 行内核 + 6 万行单体产品层」的正面反例；`ZCode` 则是与 pi 完全无交集的独立演化。
 
-> ⚠️ 一处容易搞错的地方：`deepseek-harness` 里确实存在 `@earendil-works/pi-ai` 依赖，但它挂在一个**默认休眠的可选第三方 provider 适配器**上，不在 DeepSeek 自家的模型路径上。证据与行号见 [`research/deepseek-harness/README.md`](../../research/deepseek-harness/README.md)。**把它算成"用 pi 的厂商"会让整个对照实验失效。**
+> ⚠️ 一处容易搞错的地方：`deepseek-harness` 里确实存在 `@earendil-works/pi-ai` 依赖，但它挂在一个**默认休眠的可选第三方 provider 适配器**上，不在 DeepSeek 自家的模型路径上。证据与行号见 [`research/deepseek-harness/README.md`](../../research/deepseek-harness/)。**把它算成"用 pi 的厂商"会让整个对照实验失效。**
 
 这份对照实验本书讲两遍：
 

@@ -94,8 +94,9 @@
 正文的全部行号引用都指向这里。
 
 - [研究基准](./research/BASELINE.md)
-- [pi 完整拆解（9 章）](./research/pi/README.md)
+- [pi 完整拆解（9 章）](./research/pi/)
 - [Step-Code](./research/step-code/) — 待完成
 - [minimax-code](./research/minimax-code/) — 待完成
 - [kimi-code](./research/kimi-code/) — 待完成
-- [deepseek-harness](./research/deepseek-harness/) — 待完成
+- [deepseek-harness（对照组）](./research/deepseek-harness/) — 待完成
+- [ZCode（对照组）](./research/zcode/) — 待完成

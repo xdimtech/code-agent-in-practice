@@ -13,6 +13,6 @@ examples/ch10-first-tool/
 
 这是本书与一份拆解报告的本质区别 —— 拆解引用代码是为了举证，书引用代码是为了给模板。
 
-本目录下代码采用 [MIT](./LICENSE)（与正文的 CC BY-SA 4.0 不同，方便你直接抄进自己的项目）。
+本目录下代码采用 [MIT](https://github.com/xdimtech/code-agent-in-practice/blob/main/examples/LICENSE)（与正文的 CC BY-SA 4.0 不同，方便你直接抄进自己的项目）。
 
 > 骨架期：尚无例子。第一批将随第二部分（第 7–14 章）落地。

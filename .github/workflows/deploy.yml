@@ -1,0 +1,61 @@
+name: 构建并发布站点
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# 只授予发布 Pages 所需的最小权限
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 同一时间只跑一次发布；排队而不是取消，避免中途中断留下半份站点
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # lastUpdated 取自 git 提交时间，浅克隆会让每一页都显示同一个时间
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # 内链与 SUMMARY.md 覆盖检查。VitePress 只查站点收录的页面，
+      # 这一步补上 GitHub 直读路径上的链接。
+      - name: 检查内链
+        run: npm run check
+
+      # VitePress 的 dead link 检查默认开启，构建失败即视为内容缺陷
+      - name: 构建站点
+        run: npm run build
+
+      - uses: actions/upload-pages-artifact@v3
+        if: github.ref == 'refs/heads/main'
+        with:
+          path: .vitepress/dist
+
+  deploy:
+    # PR 只构建不发布
+    if: github.ref == 'refs/heads/main'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

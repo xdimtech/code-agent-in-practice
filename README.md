@@ -69,7 +69,8 @@ pi 的官方手册有 718 行，写得不差。这本书要补的是它不会写
     ├── step-code/          ⬜
     ├── minimax-code/       ⬜
     ├── kimi-code/          ⬜
-    └── deepseek-harness/   ⬜
+    ├── deepseek-harness/   ⬜ 对照组
+    └── zcode/              ⬜ 对照组
 ```
 
 ### `research/` 是什么
@@ -79,6 +80,30 @@ pi 的官方手册有 718 行，写得不差。这本书要补的是它不会写
 pi 的提交节奏是每月 400–530 次。指向活仓库的行号三周就会烂掉。所以本书的做法是：研究在锁定的 commit 上进行，结论连同 commit 一起存进 `research/`，正文引用 `research/`。
 
 代价是书会落后于上游；收益是**每一条都能被复现**。基准表见 [`research/BASELINE.md`](./research/BASELINE.md)。
+
+---
+
+## 在线阅读与本地构建
+
+站点由 [VitePress](https://vitepress.dev) 构建，`SUMMARY.md` 是目录的唯一来源——`scripts/summary.mjs` 从它生成侧边栏，增删章节只需改那一个文件。
+
+```bash
+npm ci
+npm run check     # 内链 + SUMMARY.md 覆盖检查
+npm run build     # 产出 .vitepress/dist
+npm run preview   # 本地看构建结果
+npm run dev       # 开发服务器，带热更新
+```
+
+推送到 `main` 后由 GitHub Actions 构建并发布到 GitHub Pages（工作流见 `.github/workflows/deploy.yml`）。
+首次启用需要在仓库 **Settings → Pages → Build and deployment → Source** 选 **GitHub Actions**。
+
+站点默认挂在项目路径 `/code-agent-in-practice/` 下。换自定义域名时用 `DOCS_BASE=/ npm run build`。
+
+> **一条安全提醒：`npm run dev` 只在你信任的网络环境下开。**
+> 依赖链里的 esbuild ≤0.24.2 有一条开发服务器漏洞（[GHSA-67mh-4wv8-2f99](https://github.com/advisories/GHSA-67mh-4wv8-2f99)）：任意网站可以向本机的 dev server 发跨域请求并读取响应。它经 `vite` → `vitepress` → `vitepress-plugin-mermaid` 传递进来，上游暂无修复版本（`vitepress-plugin-mermaid` 的 peer 约束是 `vitepress: ^1.0.0`，而 VitePress 2.x 仍是 alpha，所以这里锁在 1.6.4 是当前正确的选择）。
+>
+> 影响面仅限开发服务器：CI 只跑 `npm run check` 与 `npm run build`，静态产物不受影响。开着 dev server 时不要同时浏览不可信站点即可。
 
 ---
 

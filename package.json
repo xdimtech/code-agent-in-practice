@@ -1,0 +1,19 @@
+{
+  "name": "code-agent-in-practice",
+  "version": "1.0.0-rc.1",
+  "private": true,
+  "description": "《Code Agent 实战：基于 Pi 从零构建》",
+  "license": "CC-BY-SA-4.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview",
+    "check": "node scripts/check-links.mjs"
+  },
+  "devDependencies": {
+    "mermaid": "^11.17.2",
+    "vitepress": "^1.6.4",
+    "vitepress-plugin-mermaid": "^2.0.17"
+  }
+}

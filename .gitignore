@@ -6,3 +6,5 @@ book/.book/
 *.log
 .idea/
 .vscode/
+.vitepress/dist/
+.vitepress/cache/

@@ -1,0 +1,115 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1800" viewBox="0 0 1200 1800" role="img"
+     aria-label="《Code Agent 实战：基于 Pi 从零构建》封面。图示 pi 全仓 123,629 行的构成：Agent Loop 内核仅 794 行，占 0.64%。">
+  <title>Code Agent 实战：基于 Pi 从零构建</title>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0.3" y2="1">
+      <stop offset="0%"   stop-color="#0a1020"/>
+      <stop offset="55%"  stop-color="#0d1526"/>
+      <stop offset="100%" stop-color="#070b14"/>
+    </linearGradient>
+
+    <linearGradient id="kernel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#7dd3fc"/>
+      <stop offset="50%"  stop-color="#e0f2fe"/>
+      <stop offset="100%" stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <linearGradient id="product" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#1e3a5f"/>
+      <stop offset="100%" stop-color="#274b78"/>
+    </linearGradient>
+
+    <linearGradient id="rest" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#151f33"/>
+      <stop offset="100%" stop-color="#1b283f"/>
+    </linearGradient>
+
+    <linearGradient id="rule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%"   stop-color="#38bdf8" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+
+    <filter id="glow" x="-200%" y="-800%" width="500%" height="1700%">
+      <feGaussianBlur stdDeviation="5" result="b"/>
+      <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <style>
+      .cjk  { font-family: "PingFang SC","Hiragino Sans GB","Microsoft YaHei","Noto Sans CJK SC",sans-serif; }
+      .mono { font-family: "SF Mono","JetBrains Mono","Menlo",monospace; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1800" fill="url(#bg)"/>
+
+  <!-- 极淡的代码纹理：每一条细线代表源码的一行 -->
+  <g stroke="#ffffff" stroke-opacity="0.028" stroke-width="1">
+    <g id="texture">
+      <line x1="96" y1="0" x2="470" y2="0"/><line x1="96" y1="9" x2="392" y2="9"/>
+      <line x1="112" y1="18" x2="520" y2="18"/><line x1="112" y1="27" x2="358" y2="27"/>
+      <line x1="128" y1="36" x2="436" y2="36"/><line x1="96" y1="45" x2="298" y2="45"/>
+      <line x1="112" y1="54" x2="494" y2="54"/><line x1="96" y1="63" x2="340" y2="63"/>
+    </g>
+    <use href="#texture" y="72"/><use href="#texture" y="144"/><use href="#texture" y="216"/>
+    <use href="#texture" y="288"/><use href="#texture" y="360"/><use href="#texture" y="432"/>
+    <use href="#texture" y="504"/><use href="#texture" y="576"/><use href="#texture" y="648"/>
+    <use href="#texture" y="720"/><use href="#texture" y="792"/><use href="#texture" y="864"/>
+    <use href="#texture" y="936"/><use href="#texture" y="1008"/><use href="#texture" y="1080"/>
+    <use href="#texture" y="1152"/><use href="#texture" y="1224"/><use href="#texture" y="1296"/>
+    <use href="#texture" y="1368"/><use href="#texture" y="1440"/><use href="#texture" y="1512"/>
+    <use href="#texture" y="1584"/><use href="#texture" y="1656"/><use href="#texture" y="1728"/>
+  </g>
+
+  <!-- ── 页眉 ── -->
+  <rect x="96" y="150" width="120" height="3" fill="url(#rule)"/>
+  <text class="mono" x="96" y="204" fill="#7dd3fc" font-size="23" letter-spacing="5.5">SOURCE TEARDOWN</text>
+  <text class="cjk"  x="96" y="243" fill="#64748b" font-size="21" letter-spacing="2.5">读源码，不读宣传稿</text>
+
+  <!-- ── 主标题 ── -->
+  <text class="cjk" x="96" y="420" fill="#f8fafc" font-size="118" font-weight="700" letter-spacing="2">Code Agent</text>
+  <text class="cjk" x="96" y="552" fill="#f8fafc" font-size="118" font-weight="700" letter-spacing="14">实战</text>
+
+  <rect x="96" y="612" width="76" height="5" rx="2.5" fill="#38bdf8"/>
+
+  <text class="cjk" x="96" y="694" fill="#cbd5e1" font-size="44" font-weight="500" letter-spacing="3">基于 Pi 从零构建</text>
+
+  <!-- ── 核心图示：pi 的真实构成 ── -->
+  <text class="cjk" x="96" y="838" fill="#94a3b8" font-size="23" letter-spacing="1.5">pi 全仓 123,629 行源码的构成</text>
+
+  <!-- y 996 → 1690，总高 694px，按真实行数比例切分：794 / 60,960 / 61,875 -->
+  <g>
+    <!-- 其余 9 个包：61,875 行 = 50.05% -->
+    <rect x="96" y="1343" width="150" height="347" fill="url(#rest)"/>
+    <!-- packages/coding-agent：60,960 行 = 49.31% -->
+    <rect x="96" y="1001" width="150" height="342" fill="url(#product)"/>
+    <!-- agent-loop.ts：794 行 = 0.64%，按比例只有 5px -->
+    <rect x="96" y="996" width="150" height="5" fill="url(#kernel)" filter="url(#glow)"/>
+  </g>
+
+  <!-- 引线与标注 -->
+  <g stroke="#38bdf8" stroke-width="1.6">
+    <path d="M 246 999 L 330 999" fill="none"/>
+  </g>
+  <text class="mono" x="352" y="984" fill="#e0f2fe" font-size="40" font-weight="600">794 行</text>
+  <text class="cjk"  x="352" y="1022" fill="#7dd3fc" font-size="24">agent-loop.ts　纯函数内核</text>
+  <text class="mono" x="352" y="1056" fill="#475569" font-size="21">0.64%　← 上面那道亮线就是它</text>
+
+  <g stroke="#3b6ea5" stroke-width="1.4" stroke-opacity="0.75">
+    <path d="M 246 1172 L 330 1172" fill="none"/>
+  </g>
+  <text class="mono" x="352" y="1159" fill="#cbd5e1" font-size="34" font-weight="600">60,960 行</text>
+  <text class="cjk"  x="352" y="1195" fill="#7f9bc0" font-size="23">packages/coding-agent　产品层</text>
+  <text class="mono" x="352" y="1227" fill="#475569" font-size="20">49.3%</text>
+
+  <g stroke="#334155" stroke-width="1.4">
+    <path d="M 246 1516 L 330 1516" fill="none"/>
+  </g>
+  <text class="mono" x="352" y="1505" fill="#94a3b8" font-size="30" font-weight="600">61,875 行</text>
+  <text class="cjk"  x="352" y="1539" fill="#64748b" font-size="22">其余 9 个包</text>
+
+  <!-- ── 页脚 ── -->
+  <line x1="96" y1="1742" x2="1104" y2="1742" stroke="#1e293b" stroke-width="1"/>
+  <text class="cjk"  x="96"   y="1782" fill="#64748b" font-size="21">三家衍生 · 两个对照 · 五套交付给真实用户的答案</text>
+  <text class="mono" x="1104" y="1782" fill="#475569" font-size="19" text-anchor="end">基准 b79e4cc8 · v0.84.4</text>
+</svg>
