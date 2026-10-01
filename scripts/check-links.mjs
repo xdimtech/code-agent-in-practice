@@ -77,6 +77,19 @@ export function collectLinks(text) {
   );
 }
 
+/**
+ * 站点写法（`/book/x/ch01`，以仓库根为基准、省略 .md）和 GitHub 写法
+ * （`../x/ch01.md`，相对当前文件）两种都要认。
+ */
+function resolveTarget(fromAbs, pathPart) {
+  const base = pathPart.startsWith("/") ? ROOT : dirname(fromAbs);
+  const direct = resolve(base, "." + (pathPart.startsWith("/") ? pathPart : "/" + pathPart));
+  if (!existsSync(direct) && extname(direct) === "" && existsSync(direct + ".md")) {
+    return relative(ROOT, direct + ".md");
+  }
+  return relative(ROOT, direct);
+}
+
 function checkOne(file, cache) {
   const abs = resolve(ROOT, file);
   const text = readFileSync(abs, "utf8");
@@ -86,7 +99,7 @@ function checkOne(file, cache) {
     const [pathPart, anchor] = href.split("#");
 
     // 纯锚点（#xxx）已在 SKIP_PREFIX 里排除，这里只处理有路径的
-    const targetRel = pathPart === "" ? file : relative(ROOT, resolve(dirname(abs), pathPart));
+    const targetRel = pathPart === "" ? file : resolveTarget(abs, pathPart);
     const targetAbs = resolve(ROOT, targetRel);
 
     if (!existsSync(targetAbs)) {
