@@ -262,11 +262,11 @@ CI 里有配套实现：`.github/workflows/issue-gate.yml` 与 `pr-gate.yml`，�
 | **Code Mode** | ❌ | 全仓零命中 | [5.9](./05-tools-permissions.md) |
 | **跨会话记忆** | ❌ | 只有 AGENTS.md + 摘要 | [4.5](./04-context-engineering.md) |
 | **span 遥测** | ⚠️ | 契约完整，**零埋点** | [8.1](./08-observability.md) |
-| **结构化日志** | ❌ | 129 处裸 `console.*` | [8.3](./08-observability.md) |
+| **结构化日志** | ❌ | 130 处裸 `console.*`（`coding-agent/src`，`git grep -E 'console\.(log\|error\|warn\|info\|debug\|trace)\('`） | [8.3](./08-observability.md) |
 | **录制回放** | ❌ | 无 provider 级 trace | [8.3](./08-observability.md) |
 | **`pi doctor`** | ❌ | 最接近的是 `pi auth check` | [8.5](./08-observability.md) |
 
-**九个 ❌ 里有六个是写进 README 的主动声明**（权限、沙箱、MCP、子 agent、plan mode、to-do、后台 bash），不是缺失。剩下的（Code Mode、跨会话记忆、结构化日志、录制回放、doctor）没有公开表态，其中**录制回放是最实际的短板**（[第 8 章 §8.6](./08-observability.md)）。
+**十二个 ❌ 里有七个是写进文档的主动声明**（权限、沙箱、MCP、子 agent、plan mode、to-do、后台 bash；沙箱写在 `docs/security.md:31-35`，其余六个在 README 的 "No X" 段），不是缺失。剩下的（Code Mode、跨会话记忆、结构化日志、录制回放、doctor）没有公开表态，其中**录制回放是最实际的短板**（[第 8 章 §8.6](./08-observability.md)）。
 
 ---
 

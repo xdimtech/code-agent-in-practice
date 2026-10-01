@@ -1,0 +1,13 @@
+{
+  "name": "ch04-capability-audit",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 4 章：按能力清单在代码里取证，区分「有 / 未接线 / 声明过时 / 决定不做 / 没做」（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/classify.test.ts src/manifest.test.ts src/probe.test.ts src/report.test.ts"
+  }
+}
