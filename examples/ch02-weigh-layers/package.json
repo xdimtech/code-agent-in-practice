@@ -1,0 +1,13 @@
+{
+  "name": "ch02-weigh-layers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 2 章：按层称一个仓库的源码重量，并与 fork 逐层对照（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/filter.test.ts src/layers.test.ts src/report.test.ts src/repo.test.ts"
+  }
+}

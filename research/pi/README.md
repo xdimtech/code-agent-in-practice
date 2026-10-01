@@ -14,7 +14,7 @@
 | **Step-Code** | 重组式衍生 |
 | **minimax-code** | 整包 vendor |
 | **kimi-code** | 仅 TUI 层 |
-| deepseek-harness | 仅依赖 `@earendil-works/pi-ai` 作为库，非代码衍生 |
+| deepseek-harness | 无功能依赖（唯一接触点是默认休眠的可选 provider 适配器，见 [`BASELINE.md`](../BASELINE.md#血缘谁和-pi-是什么关系)） |
 | ZCode | 完全独立，与 pi 无关 |
 
 **读懂这份拆解，才能判断那些 diff 里哪些是他们自己的判断力。**

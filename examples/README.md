@@ -19,6 +19,7 @@ examples/ch10-first-tool/
 
 | 目录 | 对应章节 | 内容 |
 | --- | --- | --- |
+| [`ch02-weigh-layers/`](./ch02-weigh-layers/) | 第 2 章 | 按层称一个仓库的源码重量，与 fork 逐层对照，零依赖 |
 | [`ch26-minimal-loop/`](./ch26-minimal-loop/) | 第 26 章 | 按 pi 三层切分写的最小 Agent 循环，零依赖 |
 | [`ch29-tool-batch/`](./ch29-tool-batch/) | 第 29 章 | 工具批次执行与按字节安全截断，零依赖 |
 | [`ch30-durable-tools/`](./ch30-durable-tools/) | 第 30 章 | 意图—结算日志、重启恢复、replay 策略、损坏即拒绝，零依赖 |
