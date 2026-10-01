@@ -1,0 +1,13 @@
+{
+  "name": "ch11-custom-provider",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 11 章：自定义 Provider——配置值解析、四种注册粒度的分层组合、compat 猜测与覆盖、流式差异、钩子契约检查（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/config-value.test.ts src/registry.test.ts src/openai-like.test.ts src/contract.test.ts src/main.test.ts"
+  }
+}
