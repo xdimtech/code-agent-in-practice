@@ -1,0 +1,13 @@
+{
+  "name": "ch08-extension-host",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 8 章：一个按 pi 心智模型写的扩展宿主——工厂函数、注册即提交、失败回滚、通知容错、拦截 fail-closed、保留键（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/loader.test.ts src/runner.test.ts src/shortcuts.test.ts src/main.test.ts"
+  }
+}

@@ -24,7 +24,7 @@
 
 | 扩展点 | API | 位置 |
 | --- | --- | --- |
-| 事件订阅（45 个事件） | `on(...)` | `:1257-1301` |
+| 事件订阅（36 个事件） | `on(...)` | `:1257-1301` |
 | 注册 LLM 工具 | `registerTool` | `:1308` |
 | 斜杠命令 | `registerCommand` | `:1317` |
 | 键盘快捷键 | `registerShortcut` | `:1320` |
@@ -36,7 +36,7 @@
 | 跨扩展事件总线 | `events: EventBus` | `:1499` |
 | UI（对话框 / overlay / widget / 自定义编辑器） | `ExtensionUIContext` | `:133` |
 
-45 个事件里，有几个的权力远超"通知"：
+36 个事件里，有几个的权力远超"通知"：
 
 - **`before_provider_request` / `before_provider_headers` / `after_provider_response`** —— 可改写发往 LLM 的**原始 payload 与 HTTP header**；
 - **`tool_call` / `tool_result`** —— 可改写工具入参与结果，也可 `block`（这是[第 5 章 §5.5](./05-tools-permissions.md) 说的那条唯一的拦截路径）；
@@ -176,14 +176,14 @@
 ### 可疑
 
 1. **扩展包安装不禁 lifecycle script**（§7.4）——与仓库自身 `AGENTS.md` 的依赖安全规则直接矛盾。
-2. **扩展同进程全权限**，且 `before_provider_headers` 意味着**任何扩展都能读写 API key 所在的请求头**。这与[第 5 章 §5.6](./05-tools-permissions.md) 的 `getShellEnv` 全量透传是同一类暴露，只是路径不同：一条是模型执行的命令能读 env，一条是扩展能读 header。
+2. **扩展同进程全权限**。`before_provider_headers` 能读写组装好的请求头，但 API key 是单独的 `apiKey` 字段，不在这份 header 里（`packages/ai/src/models.ts:655-657`：`apiKey` 与 `mergeHeaders(auth.headers, options.headers)` 分开传）——这道钩子本身不是泄漏 key 的通道。真正的通道更直接：扩展与宿主同进程，能读 `process.env` 和 `~/.pi/agent/auth.json`（`0o600` 只防其他 OS 用户，`auth-storage.ts:25`）。这与[第 5 章 §5.6](./05-tools-permissions.md) 的 `getShellEnv` 全量透传是同一类暴露，只是路径不同：一条是模型执行的命令能读 env，一条是扩展代码能读 env 和凭据文件。
 3. **`custom-provider-anthropic/index.ts:51` 把 OAuth CLIENT_ID 做 base64 混淆**——CLIENT_ID 本身不是 secret，base64 也不是加密。属于无意义的遮掩，反而会让读者误以为它是敏感值。
 
 ---
 
 ## 7.9 本章结论
 
-**pi 的扩展系统是"最大权力 + 最小约束"。** 45 个事件覆盖主循环每个接缝，provider 四粒度可换，七个内置工具可整体重定向，同进程零开销——能力上限非常高。
+**pi 的扩展系统是"最大权力 + 最小约束"。** 36 个事件覆盖主循环每个接缝，provider 四粒度可换，七个内置工具可整体重定向，同进程零开销——能力上限非常高。
 
 代价是三条：
 
