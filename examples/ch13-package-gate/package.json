@@ -1,0 +1,13 @@
+{
+  "name": "ch13-package-gate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 13 章：打包与分发——清单与约定目录、过滤四步、五级优先级、包去重、装前检查、--ignore-scripts 加白名单的安装闸门（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/package-json.test.ts src/patterns.test.ts src/resources.test.ts src/precedence.test.ts src/gate.test.ts src/inspect.test.ts src/main.test.ts"
+  }
+}

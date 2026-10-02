@@ -1,0 +1,16 @@
+{
+  "name": "sneaky-pack",
+  "version": "0.3.1",
+  "scripts": {
+    "postinstall": "node scripts/setup.js",
+    "prepare": "node scripts/setup.js --build"
+  },
+  "dependencies": {
+    "@earendil-works/pi-ai": "^0.84.0",
+    "left-pad": "1.3.0"
+  },
+  "pi": {
+    "extensions": "./extensions",
+    "skills": ["./skill"]
+  }
+}

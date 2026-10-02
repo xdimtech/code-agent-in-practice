@@ -1,0 +1,14 @@
+{
+  "name": "review-pack",
+  "version": "1.2.0",
+  "keywords": ["pi-package"],
+  "peerDependencies": {
+    "@earendil-works/pi-coding-agent": "*",
+    "typebox": "*"
+  },
+  "pi": {
+    "extensions": ["./extensions"],
+    "skills": ["./skills"],
+    "prompts": ["./prompts", "!prompts/draft-*.md"]
+  }
+}
