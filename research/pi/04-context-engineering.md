@@ -27,7 +27,9 @@
 
 这一点值得与主流实现对照——Claude Code 系会往 system prompt 里塞当前时间、git branch、recent commits。pi 一概不放。
 
-**推断**：代码里没有显式的 `cache_control`，但**正因为不注入时间/git 状态，整个前缀在一次会话内天然稳定**。唯一的破坏点是工具集变更触发的 `_rebuildSystemPrompt`（`agent-session.ts:984, 2484`）。这是"用不注入换缓存命中"的取舍，只是 pi 没把它写成注释。
+**更正（第 12 章核对）**：适配器层**有**显式的 `cache_control`——Anthropic 适配器在 system 块（`ai/src/api/anthropic-messages.ts:1025-1032`）、最后一个工具（`:1360`）、最后一条用户消息的最后一块（`:1295-1316`）上打断点，TTL 由 `PI_CACHE_RETENTION` 决定（`:50-74`）；OpenAI 兼容适配器发 `prompt_cache_key`（`openai-completions.ts:804-809`）。
+
+**推断**：断点只管「从哪里开始复用」，能不能复用取决于前缀字节是否不变。**正因为不注入时间/git 状态，整个前缀在一次会话内天然稳定**。破坏点是工具集变更、`/reload` 和扩展资源加载触发的重建（`agent-session.ts:984, 2484, 2820`），以及扩展在 `before_agent_start` 里改 system prompt。这是"用不注入换缓存命中"的取舍，只是 pi 没把它写成注释。
 
 反向的证据在压缩那边：摘要请求**显式关闭缓存写入**——`cacheRetention: "none"` + 新 `sessionId`（`core/compaction/compaction.ts:588-593`），注释说明一次性摘要不应该产生无法复用的 cache write。也就是说作者是清楚缓存经济学的，只是在主路径上选择了"保持稳定"而非"显式标记"。
 
@@ -153,7 +155,7 @@ v2 只判 aborted/error（`:578-588`），两道都没有。
 
 ## 4.5 Skills：两段式注入
 
-`skills.ts` 递归扫描：遇到 `SKILL.md` 即返回，不再深入（`:138-150`）；根层 `.md` 也可以是 skill 但必须有 description（`:271`）；遵守 `.gitignore/.ignore/.fdignore` 并对子目录规则加路径前缀（`:178-242`）；name 必须等于父目录名、小写连字符、≤64 字符（`:301-311`）。
+`skills.ts` 递归扫描：遇到 `SKILL.md` 即返回，不再深入（`:138-150`）；根层 `.md` 也可以是 skill 但必须有 description（`:271`）；遵守 `.gitignore/.ignore/.fdignore` 并对子目录规则加路径前缀（`:178-242`）；name 取 frontmatter，缺省时用父目录名；校验小写连字符、首尾不为连字符、无连续连字符、≤64 字符（`:91-112`），**违规只警告、照样加载**，只有缺 description 才不加载（`:329`）；与目录名不同也允许（`docs/skills.md:7`）。
 
 **注入分两段**：
 
@@ -193,7 +195,7 @@ pi 的长期上下文 = **AGENTS.md + compaction summary**，没有第三样东�
 
 值得学的四点：
 
-1. **system prompt 不注入时间/git 状态** —— 用"少放东西"换前缀稳定，比事后打 `cache_control` 更彻底；
+1. **system prompt 不注入时间/git 状态** —— 用"少放东西"换前缀稳定——适配器打的 `cache_control` 断点只有在前缀字节不变时才有用，不放会变的东西是断点生效的前提；
 2. **绝对预留而非比例触发** —— `contextWindow - 16384`，不受窗口大小影响的安全边际；
 3. **摘要末尾累积 `<read-files>` / `<modified-files>`** —— 针对"压缩丢文件路径"这个具体失败模式；
 4. **截断时给出续读路径** —— 硬限制变分页，模型能自救。

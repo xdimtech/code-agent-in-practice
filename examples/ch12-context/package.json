@@ -1,0 +1,13 @@
+{
+  "name": "ch12-context",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 12 章：system prompt 与上下文注入——拼装顺序、AGENTS.md 发现、Skills 两段式注入、扩展注入链、前缀缓存模拟（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/context-files.test.ts src/skills.test.ts src/prompt.test.ts src/inject.test.ts src/cache.test.ts src/main.test.ts"
+  }
+}

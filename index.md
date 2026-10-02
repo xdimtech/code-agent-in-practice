@@ -52,6 +52,7 @@ features:
 | 先跑起来看看 | [第 7 章 30 分钟跑通](/book/02-getting-started/ch07-hello-pi) |
 | 怎么加一个自己的工具 | [第 10 章 写第一个工具](/book/02-getting-started/ch10-first-tool) |
 | 怎么接自家的模型 | [第 11 章 接入自家模型](/book/02-getting-started/ch11-custom-provider) |
+| 怎么塞进公司知识又不毁缓存 | [第 12 章 改造 system prompt 与上下文](/book/02-getting-started/ch12-context) |
 | 它要执行 `rm -rf` 了，怎么拦 | [第 16 章 权限与确认](/book/03-policy-layer/ch16-permissions) |
 | 它自己转起圈来了，怎么停 | [第 18 章 防死循环](/book/03-policy-layer/ch18-loop-guards) |
 | 上线前还差什么 | [第 22 章 上线前必补清单](/book/04-shipping/ch22-preflight) |
