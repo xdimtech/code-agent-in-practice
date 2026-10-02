@@ -285,7 +285,7 @@ CLI 实际使用的实现是 `core/session-manager.ts`，**JSONL，一会话一�
 | 工具调用**参数** | **完整逐字记录** | `_persist()` 是无 replacer、无长度上限的 `JSON.stringify`（`:1022,1034,1041`）；persist 路径无 strip/sanitize/redact（仅 `:1138` 对会话名做换行清理）；导出同理（`core/session-export.ts:29-37`） |
 | 工具**结果** | **记录的是已截断版本** | 截断发生在工具执行时、构造 `ToolResultMessage` 之前；限额 `core/tools/truncate.ts:11-13` |
 | bash 完整输出 | **不在会话记录里** | 写临时文件，会话只留路径（`core/bash-executor.ts:113-127`，文案 `core/messages.ts:94-95`）；**该临时文件不在 session 目录内** |
-| append-only | **不是** | 编辑与分支删除触发整文件重写（`_rewriteFile()` 调用点 `:910,919,1486`） |
+| append-only | **不是** | 空文件初始化、版本迁移时整文件重写（`_rewriteFile()` 调用点 `:910,919`；`:1486` 是分支导出写新文件）；加载时给缺换行的末行补 `\n`（`:555`）。日常编辑追加新条目（`:1041`） |
 | 完整性校验 | **无** | 两套实现中都没有哈希、签名或校验和 |
 | 图片 | base64 内联 | `packages/ai/src/types.ts:367-371` |
 

@@ -28,6 +28,7 @@ examples/ch10-first-tool/
 | [`ch14-session-reader/`](./ch14-session-reader/) | 第 14 章 | 调试与排障：读会话 JSONL（坏行、分支、压缩、花费）、按严重程度诊断、会话到请求的投影、provider 请求录制与回放、自检（doctor）、调试变量检查、分享前脱敏，零依赖 |
 | [`ch15-policy-layer/`](./ch15-policy-layer/) | 第 15 章 | 机制之上的最小策略层：两条执行路径的失败语义、命令三态分析（命中 / 看不全 / 普通）、写入路径规则、分层配置只许收紧、各闸门的覆盖面检查，零依赖 |
 | [`ch24-upgrade-triage/`](./ch24-upgrade-triage/) | 第 24 章 | 升级前的四个检查：CHANGELOG 区间里的破坏性变更、vendor 标记、补丁台账体检、基线 / 我们 / 上游新版三方分诊并与台账对账，零依赖 |
+| [`ch25-audit-log/`](./ch25-audit-log/) | 第 25 章 | 合规与审计边界：检查 pi 会话能证明什么、带哈希链（sha256 / HMAC）与外部锚点的只追加审计日志、停在第一处断裂的逐行校验、记下的参数与执行的参数对照、写不进去就拦下工具调用的 pi 扩展，零依赖 |
 | [`ch26-minimal-loop/`](./ch26-minimal-loop/) | 第 26 章 | 按 pi 三层切分写的最小 Agent 循环，零依赖 |
 | [`ch29-tool-batch/`](./ch29-tool-batch/) | 第 29 章 | 工具批次执行与按字节安全截断，零依赖 |
 | [`ch30-durable-tools/`](./ch30-durable-tools/) | 第 30 章 | 意图—结算日志、重启恢复、replay 策略、损坏即拒绝，零依赖 |

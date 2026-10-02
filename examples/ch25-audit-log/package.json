@@ -1,0 +1,13 @@
+{
+  "name": "ch25-audit-log",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 25 章：合规与审计边界——检查 pi 会话能证明什么、不能证明什么；带哈希链（sha256 / HMAC）与外部锚点的只追加审计日志、逐行校验与断点定位、记下的参数与执行的参数对照、写不进去时关着失败的 pi 扩展（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/canonical.test.ts src/chain.test.ts src/verify.test.ts src/anchor.test.ts src/drift.test.ts src/records.test.ts src/writer.test.ts src/session-check.test.ts src/key.test.ts src/load.test.ts extension/audit-log.test.ts src/main.test.ts"
+  }
+}
