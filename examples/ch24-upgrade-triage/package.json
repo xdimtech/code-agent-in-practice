@@ -1,0 +1,13 @@
+{
+  "name": "ch24-upgrade-triage",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 24 章：版本与升级策略——读上游 CHANGELOG 找出两版之间的破坏性变更（含补丁版里的）、补丁台账格式检查、vendor 标记检查、三方分诊（基线 / 我们 / 上游新版）、台账与实际改动对账（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/semver.test.ts src/changelog.test.ts src/ledger.test.ts src/vendor.test.ts src/triage.test.ts src/reconcile.test.ts src/manifest.test.ts src/main.test.ts"
+  }
+}
