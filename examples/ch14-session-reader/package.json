@@ -1,0 +1,13 @@
+{
+  "name": "ch14-session-reader",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 14 章：调试与排障——读会话 JSONL（坏行、分支、压缩、花费）、会话到请求的投影、provider 请求录制与回放、自检（doctor）、调试变量检查、分享前脱敏（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/jsonl.test.ts src/tree.test.ts src/usage.test.ts src/diagnose.test.ts src/debug-vars.test.ts src/redact.test.ts src/locate.test.ts src/timeline.test.ts src/wire.test.ts src/recorder.test.ts src/tape.test.ts src/replay.test.ts src/tape-check.test.ts src/doctor.test.ts src/load.test.ts extension/record-provider.test.ts src/main.test.ts"
+  }
+}
