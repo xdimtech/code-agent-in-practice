@@ -1,0 +1,13 @@
+{
+  "name": "ch15-policy-layer",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 15 章：机制与策略——一份策略接两条执行路径（tool_call 与 user_bash）、命令三态分析、只许收紧的分层合并、钩子失败语义、覆盖面检查（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/shell.test.ts src/command.test.ts src/pi-gate.test.ts src/paths.test.ts src/decide.test.ts src/merge.test.ts src/policy-file.test.ts src/host.test.ts src/hooks.test.ts src/coverage.test.ts src/main.test.ts"
+  }
+}
