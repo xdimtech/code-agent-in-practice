@@ -159,7 +159,7 @@ RPC 模式有一条容易踩的契约（`README.md:489`）：
 
 更值得注意的是**条目的形态**：`-cn` / `-token-plan` / `-individual` / `-ams` / `-sgp` 这些后缀说明 pi 不是简单加个 baseUrl，而是**把同一家厂商的国内/国际站、按量付费/包月套餐、不同地域机房分别建模**。小米一家就有四个条目（本体 + 国内包月 + 阿姆斯特丹 + 新加坡）。
 
-**推断**：这种粒度只可能来自真实用户的报错与 PR，不可能是作者主动调研出来的。它是"中国厂商的开发者在用 pi"这一事实的代码痕迹——**这恰好也是本书关心的问题**：三家中国厂商基于 pi 做自己的 Code Agent（step-harness / Step-Code / minimax-code / kimi-code），而 pi 反过来又内置了它们的 provider。
+**推断**：这种粒度只可能来自真实用户的报错与 PR，不可能是作者主动调研出来的。它是"中国厂商的开发者在用 pi"这一事实的代码痕迹——**这恰好也是本书关心的问题**：三家中国厂商基于 pi 做自己的 Code Agent（Step-Code / minimax-code / kimi-code），而 pi 反过来又内置了它们的 provider。
 
 其余 24 个：`anthropic`、`openai`、`openai-codex`、`google`、`google-vertex`、`amazon-bedrock`、`azure-openai-responses`、`github-copilot`、`xai`、`mistral`、`groq`、`cerebras`、`fireworks`、`together`、`nvidia`、`huggingface`、`baseten`、`openrouter`、`vercel-ai-gateway`、`cloudflare-ai-gateway`、`cloudflare-workers-ai`、`radius`（pi 自家）、`opencode`、`opencode-go`。
 
@@ -231,7 +231,7 @@ CI 里有配套实现：`.github/workflows/issue-gate.yml` 与 `pr-gate.yml`，�
 
 **判定：这是一个"高速度 + 高集中度 + 主动限流"的项目。** 三者互为因果——每天 15 次提交的节奏下，开放的 issue 队列会立刻淹没维护者；而 65% 的提交来自一个人，意味着设计一致性由单一心智保证，这也是为什么前面几章能反复看到"同一套哲学贯穿到底"（机制而非策略、进程编排而非框架调度、外包给 rg/fd 而非自己实现）。
 
-**代价同样明确**：巴士系数极低，且外部贡献门槛高。对下游厂商而言这意味着 **fork 之后很难回流，只能长期自己维护 diff**——这正是 step-harness 走硬分叉、minimax-code 整包 vendor 的现实背景。
+**代价同样明确**：巴士系数极低，且外部贡献门槛高。对下游厂商而言这意味着 **fork 之后很难回流，只能长期自己维护 diff**——这正是 Step-Code 重组式衍生、minimax-code 整包 vendor 并在 `MINIMAX_CHANGES.md` 里自己记补丁台账的现实背景。
 
 ---
 

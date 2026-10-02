@@ -78,7 +78,12 @@ export const PI_MANIFEST: readonly Capability[] = [
   { id: "memory", name: "跨会话记忆", present: [inSrc("MEMORY\\.md|memories|memoryStore|saveMemory")] },
   { id: "structured-log", name: "结构化日志", present: [inSrc("createLogger|LogLevel|pino|winston")] },
   { id: "replay", name: "provider 录制回放", present: [inSrc("PI_TRACE|PI_RECORD|PI_REPLAY|recordRequest")] },
-  { id: "doctor", name: "自检命令（doctor）", present: [inSrc("doctor")] },
+  {
+    id: "doctor",
+    name: "自检命令（doctor）",
+    // 要的是一条命令：注释里一句「the plugin doctor」不算
+    present: [inSrc("[\"'/]doctor[\"']|registerCommand\\([\"']doctor")],
+  },
 
   // —— 契约在、没接线的 ——
   {

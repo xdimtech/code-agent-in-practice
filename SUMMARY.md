@@ -69,7 +69,7 @@
 
 ## 第六部分 · 厂商全景：三家衍生 + 两个对照
 
-- [第 31 章 阶跃星辰：Step-Code / step-harness](./book/06-vendors/ch31-step.md)
+- [第 31 章 阶跃星辰：Step-Code](./book/06-vendors/ch31-step.md)
 - [第 32 章 MiniMax：minimax-code](./book/06-vendors/ch32-minimax.md)
 - [第 33 章 月之暗面：kimi-code](./book/06-vendors/ch33-kimi.md)
 - [第 34 章 DeepSeek：deepseek-harness（对照组）](./book/06-vendors/ch34-deepseek.md)

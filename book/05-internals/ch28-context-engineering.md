@@ -82,7 +82,7 @@ xychart-beta
 
 ### 一个真实的调参记录
 
-`Step-Code` 和 `step-harness` 都把这个默认值改成了 24576，并留下了理由：
+`Step-Code` 把这个默认值改成了 24576，并留下了理由。v1 与 v2 两份 `compaction.ts` 里各有一份逐字相同的注释（v2 在 `agent-core/src/harness/compaction/compaction.ts:161-170`），这里引 v1：
 
 ```ts
 // Step-Code packages/coding-agent/src/core/compaction/compaction.ts:147-155
@@ -105,7 +105,7 @@ export const DEFAULT_COMPACTION_SETTINGS: CompactionSettings = {
 | 仓库 | 触发公式 | 性质 | 位置 |
 | --- | --- | --- | --- |
 | pi | `window − 16384` | 绝对 | `compaction.ts:235-237` |
-| Step-Code / step-harness | `window − 24576` | 绝对（调大） | `compaction.ts:154` / `:148` |
+| Step-Code | `window − 24576` | 绝对（调大） | v1 `coding-agent/src/core/compaction/compaction.ts:154`；v2 `agent-core/src/harness/compaction/compaction.ts:168` |
 | minimax-code | `window − max(16384, 单轮输出上限 + 2048)`；MiniMax-M3 的 512K / 1M 模式改为 `window × 0.9` | 绝对为主，超大窗口用比例 | `context-manager/src/settings.ts:18-37` |
 | deepseek-harness（对照） | `min(window × 0.8, window − 补全预留 − headroom)` | 比例，**但有绝对上限** | `compaction-basic/src/config.ts:20`、`:172`、`:191-194` |
 | ZCode（对照） | `window − min(输出上限, 21000) − 13000` | 绝对 | `core/src/compact/policy.ts:67-88` |
@@ -260,7 +260,7 @@ export function getSummarizationFailure(response: AssistantMessage, label: strin
 
 | 仓库 | 截断消息中的工具调用 | 位置 |
 | --- | --- | --- |
-| pi / step-harness / Step-Code | 整批失败 | L1 与 pi 相同 |
+| pi / Step-Code | 整批失败 | Step-Code `agent-core/src/agent-loop.ts:245`、`:418`，与 pi 相同 |
 | minimax-code | **没有这道保护** | 内嵌的 pi v0.79.1 `agent-loop.ts` 中 `failToolCallsFromTruncatedMessage` 出现 0 次 |
 | ZCode（对照） | 对文本输出采取「续写」：保存部分结果、追加 Continue，最多 3 次 | `runtime/methods/turn-output-token-continuation.ts:40-57` |
 | deepseek-harness（对照） | 未核实 | — |

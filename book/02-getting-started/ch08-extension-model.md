@@ -12,7 +12,7 @@
 ## 素材来源
 
 - `research/pi/07-extensibility.md` §7.1、§7.3
-- 对照：`step-harness` `fe153835`
+- 对照：`Step-Code` `7dd66cb`
 - 配套代码：[`examples/ch08-extension-host/`](../../examples/ch08-extension-host/)
 
 ---
@@ -529,55 +529,66 @@ flowchart TD
 
 ---
 
-## 8.5 下游对照：step-harness 把隔离加在了哪里
+## 8.5 下游对照：Step-Code 把隔离加在了哪里
 
-step-harness 是 pi 的一个下游 fork。看它怎么处理扩展，能看出「零隔离」在真实产品里的去留。
+Step-Code 是阶跃星辰基于 pi 重构的开源版本。看它怎么处理扩展，能看出「零隔离」在真实产品里的去留。
 
-【代码事实】扩展加载器几乎原样保留：`core/extensions/loader.ts` 与 pi 一致，只在 `discoverAndLoadExtensions` 多了一个 `configDirName` 参数，用来换配置目录名。扩展包安装参数也一样不带 `--ignore-scripts`（step-harness `core/package-manager.ts:1796`、`:1809`）。
+【代码事实】扩展加载器基本原样保留：`packages/coding-agent/src/core/extensions/loader.ts` 与 pi 相比，只改了包作用域别名（新增 `@step-harness/*`，旧的 `@earendil-works/*` 作为兼容键保留）、去掉了计时埋点、多了一个批量 `registerTools`，并在 `discoverAndLoadExtensions` 加了一个 `configDirName` 参数，用来换配置目录名。扩展照旧在宿主进程里由 jiti 加载。扩展包安装参数也一样不带 `--ignore-scripts`（`core/package-manager.ts:1770-1791`）。
 
-但 step-harness 加了一种 pi 没有的代码：**workflow 脚本**——由模型在运行时编写、用来编排多步任务的 JavaScript。这种代码它放进了 isolated-vm：
+但 Step-Code 加了一种 pi 没有的代码：**workflow 脚本**——由模型在运行时编写、用来编排多个子 agent 的 JavaScript。这种代码它放进了沙箱。文件头的注释把选型的来龙去脉写得很完整：
 
 ```ts
-// step-harness: packages/coding-agent/src/extensions/workflow/vm.ts:5-7, 88-99（节选）
+// Step-Code: packages/coding-agent/src/features/workflow/vm.ts:1-18（节选）
+/**
+ * The workflow sandbox: QuickJS compiled to WebAssembly.
+ *
+ * A workflow script is authored by the model, so it runs isolated — no host
+ * object references, no `process`/`require`/`fetch`, no wall clock and no
+ * randomness (the last two keep journal replay deterministic), under a memory
+ * cap and a timeout.
+ *
+ * QuickJS-on-WebAssembly is engine-agnostic, which is the point. The previous
+ * sandbox, `isolated-vm`, is a native addon that links V8's C++ API directly, so
+ * it could only load on a V8 host: the released executable is built with
+ * `bun build --compile` and runs on JavaScriptCore, where that addon can never
+ * load however it is installed. Workflows — and with them the ultraloop opt-in,
+ * which shares the workflow registration gate — were therefore silently absent
+ * from every released build while working fine in a source run on Node.
+ */
+```
+
+这段注释记录了一次真实的翻车：早先的沙箱是 `isolated-vm`，一个直接链接 V8 C++ API 的原生插件；发布的可执行文件用 `bun build --compile` 打包、跑在 JavaScriptCore 上，这个插件无论怎么装都加载不了。于是 workflow 在源码运行时好好的，在**每一个发布版本里都静默消失**。换成 QuickJS 编译到 WebAssembly 之后，两种运行时用同一个引擎，这一类分歧就没有了。
+
+沙箱的参数在同一个文件里：
+
+```ts
+// Step-Code: packages/coding-agent/src/features/workflow/vm.ts:49-51
 const MAX_SCRIPT_BYTES = 128 * 1024;
 const DEFAULT_MEMORY_LIMIT_MB = 64;
 const DEFAULT_TIMEOUT_MS = 120_000;
-// …
-export async function runInIsolatedVm(
-	script: string,
-	args: unknown,
-	host: WorkflowVmHost,
-	options: WorkflowVmOptions = {},
-): Promise<WorkflowVmResult> {
-	const sourceBytes = Buffer.byteLength(script, "utf8");
-	if (sourceBytes > MAX_SCRIPT_BYTES) throw new Error(`Workflow script exceeds ${MAX_SCRIPT_BYTES} bytes`);
-	const ivm = loadIsolatedVm();
-	if (!ivm) throw new Error("Workflow runtime unavailable: isolated-vm is not installed or failed to load");
-	const isolate = new ivm.Isolate({ memoryLimit: clampMemory(options.memoryLimitMb) });
-	// …
 ```
 
-`isolated-vm` 是可选依赖（step-harness `package.json:78-80`），装不上怎么办？注册闸决定：没有 isolate 就不注册 workflow 工具，模型根本看不到它：
+内存可调到 8–256 MB，超时可调到 0.1–600 秒（`clampMemory`、`clampTimeout`，`:486-494`）。超时靠 QuickJS 的中断处理器实现，截止时间从「最后一次宿主活动」算起，而不是从开跑算起（`:144-151`），这样一个长时间等子 agent 的健康扇出不会被误杀。脚本里的 `Date` 被换成一个调用即抛错的函数（`:399-401`），保证重放日志时结果确定。
+
+沙箱可用了，注册闸也跟着变了：
 
 ```ts
-// step-harness: packages/coding-agent/src/extensions/workflow/registration-gate.ts:15-21
-export function isWorkflowRegistrationEnabled(options: { enabled?: boolean; vmExecutor?: unknown } = {}): boolean {
-	const enabled = options.enabled === true || envFlag(process.env.STEP_ENABLE_WORKFLOW);
-	if (!enabled) return false;
-	if (envFlag(process.env.STEP_DISABLE_WORKFLOW)) return false;
-	if (!isIsolatedVmAvailable() && !options.vmExecutor) return false;
-	return true;
+// Step-Code: packages/coding-agent/src/features/workflow/registration-gate.ts:28-32
+export function resolveWorkflowRegistration(options: { enabled?: boolean } = {}): WorkflowRegistrationDecision {
+	if (envFlag(process.env.STEP_DISABLE_WORKFLOW)) return { enabled: false, reason: "disabled-by-env" };
+	if (options.enabled === false) return { enabled: false, reason: "not-enabled" };
+	return { enabled: true };
 }
 ```
 
-要用 workflow，必须显式打开开关，并且要么 isolated-vm 可用，要么注入了自定义执行器。隔离不可用时，它选择不提供这个功能，而不是退回到同进程执行——又一个 fail-closed。
+注册默认打开，只剩两种显式关闭：环境变量 `STEP_DISABLE_WORKFLOW`，或者嵌入方传 `enabled: false`。注释（`:17-26`）说得清楚：注册了工具只代表「环境里有这个能力」，**用不用**仍由每一轮的 ultraloop 授权决定。system prompt 里也写明 workflow 只在用户这一轮消息带了 `ultraloop` 关键词、或明确要求时才可以用（`step/system-prompt.ts:272`）。
 
-| 代码 | 谁写的 | 什么时候写的 | step-harness 的处置 |
+| 代码 | 谁写的 | 什么时候写的 | Step-Code 的处置 |
 | --- | --- | --- | --- |
 | 扩展 | 用户安装（或项目带来，经信任） | 运行之前 | 同进程，零隔离（与 pi 相同） |
-| workflow 脚本 | 模型 | 运行时，每次都可能不同 | isolated-vm：内存 64 MB、超时 120 秒、脚本 128 KiB；隔离不可用就不注册 |
+| workflow 脚本 | 模型 | 运行时，每次都可能不同 | QuickJS-WASM 沙箱：默认内存 64 MB、超时 120 秒、脚本 128 KiB，无 `process`/`require`/`fetch`/时钟/随机数；工具默认注册，使用要逐轮授权 |
 
-【推断】按本书的立场只看「谁选了什么、代价是什么」：step-harness 把隔离放在了**代码作者不是用户**的地方。扩展再危险，也是用户自己选择装的，责任边界清楚；模型写的脚本没有人在运行前看过，而且可能受 prompt injection 影响。这个划分很务实。代价有两个：一是同一个产品里有两套信任模型，读者要分别理解；二是 workflow 脚本的能力边界从此由宿主注入的 `host` 桥接对象决定——桥上暴露了什么，隔离就只隔到哪里。隔离把问题从「代码能做什么」变成了「桥能做什么」，后者要单独审计。
+【推断】按本书的立场只看「谁选了什么、代价是什么」：Step-Code 把隔离放在了**代码作者不是用户**的地方。扩展再危险，也是用户自己选择装的，责任边界清楚；模型写的脚本没有人在运行前看过，而且可能受 prompt injection 影响。这个划分很务实。代价有三个：一是同一个产品里有两套信任模型，读者要分别理解；二是 workflow 脚本的能力边界从此由宿主注入的 `WorkflowVmHost` 桥决定（`vm.ts:53-62`：`agent`、`phase`、`log`、`iterate`、`nestedWorkflow` 和预算查询）——桥上暴露了什么，隔离就只隔到哪里，而 `agent()` 起的子 agent 本身是带完整工具的，隔离把问题从「代码能做什么」变成了「桥能做什么」，后者要单独审计；三是从「沙箱不可用就不注册」变成「默认注册、逐轮授权」，闸门从环境能力挪到了用户同意上，依赖模型遵守 prompt 里的授权规则。那次 `isolated-vm` 的静默缺席还留下一个通用教训：**隔离方案要在发布形态上验证**，源码能跑不代表打包后能跑。
 
 ---
 
@@ -706,7 +717,7 @@ $ npm start
 
 1. **回滚要覆盖已经发生的副作用。** 能暂存的都暂存，不能暂存的（事件总线订阅）就先做、记下撤销办法。演示第 1 段的回滚检查就是为这件事写的；没有它，`broken.ts` 的订阅会在它「加载失败」之后继续收到事件。
 2. **同一个异常，事件不同，处置相反。** 设计每个事件时先问：跳过一个出错的处理函数，会不会让某件事变得危险？会，就 fail-closed。pi 只对 `tool_call` 回答了「会」；如果你在别的事件上做安全相关的事，要么改宿主，要么在扩展里自己兜底。
-3. **try/catch 是容错，不是隔离。** 它能防一个扩展的异常拖垮宿主，防不了一个扩展读你的环境变量、改全局对象、开子进程。要隔离，就要换进程或换 isolate，那是另一种架构；8.5 节的 step-harness 只对模型写的代码付了这个代价。
+3. **try/catch 是容错，不是隔离。** 它能防一个扩展的异常拖垮宿主，防不了一个扩展读你的环境变量、改全局对象、开子进程。要隔离，就要换进程或换 isolate，那是另一种架构；8.5 节的 Step-Code 只对模型写的代码付了这个代价。
 
 ---
 
@@ -716,5 +727,5 @@ $ npm start
 - **加载即事务**：工厂函数成功才 `commit`，抛错就 `discard`（`loader.ts:545-564`）。事件总线订阅是唯一先生效、失败再撤销的注册。事务只管经过 API 的注册，不管工厂函数里的副作用。
 - **两种失败语义**：通知类事件 fail-open，每个处理函数单独 try/catch（`runner.ts:850-880`）；`tool_call` 是唯一 fail-closed 的事件，拦截器出错等于拦下（`runner.ts:982-1002` → `agent-loop.ts:659-664`）。`before_provider_request` 等能改写请求的事件仍是 fail-open。
 - **同进程、零隔离是书面的选择**（`docs/extensions.md:111`）：扩展能读环境变量和 `auth.json`，扩展包安装时 lifecycle script 照常执行（`package-manager.ts:1785-1806`）。宿主唯一的闸是项目信任（`project-trust.ts:46-96`），唯一强制执行的边界是 18 个保留快捷键（`runner.ts:71-91`）——后者是可用性边界，不是安全边界。
-- **step-harness 只对模型写的代码加了隔离**：扩展照旧同进程，workflow 脚本进 isolated-vm，隔离不可用时不注册该工具。隔离从「代码能做什么」变成了「宿主的桥能做什么」。
+- **Step-Code 只对模型写的代码加了隔离**：扩展照旧同进程，workflow 脚本进 QuickJS-WASM 沙箱（此前的 isolated-vm 在发布版里加载不了，换掉了）。隔离从「代码能做什么」变成了「宿主的桥能做什么」。
 - **配套代码**用约 450 行复现了这五条规则，演示输出逐段对应本章各节。

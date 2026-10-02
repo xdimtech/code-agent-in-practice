@@ -14,7 +14,7 @@
 
 - `research/pi/01-product-teardown.md` §1.1–1.3
 - `research/BASELINE.md`（版本表、血缘、行数口径）
-- 对照：`step-harness` `fe153835`、`Step-Code` `7dd66cb9`、`minimax-code` `89c930a2`、`kimi-code` `65ae3e36`
+- 对照：`Step-Code` `7dd66cb9`、`minimax-code` `89c930a2`、`kimi-code` `65ae3e36`
 - 配套代码：[`examples/ch02-weigh-layers/`](../../examples/ch02-weigh-layers/)
 
 ---
@@ -25,7 +25,7 @@
 | --- | --- | --- |
 | **794** | 驱动「模型说话 → 跑工具 → 再说话」的循环，`packages/agent/src/agent-loop.ts` 的行数 | 内核小，而且不懂代码 |
 | **60,960** | 产品包 `packages/coding-agent` 的源码行数，占全仓 49% | 「coding agent」是产品层长出来的 |
-| **4** | 基于 pi 做产品的下游仓库数（step-harness、Step-Code、minimax-code、kimi-code） | 这个形状适合被拆开拿走 |
+| **3** | 本书研究的、基于 pi 做产品的下游仓库数（Step-Code、minimax-code、kimi-code） | 这个形状适合被拆开拿走 |
 
 本章所有行数都按 [`BASELINE.md` § 行数怎么量](../../research/BASELINE.md#行数怎么量) 的口径计算：只算 git 跟踪的 `.ts`/`.tsx`，路径须含 `/src/`，排除测试与 `examples/`。2.6 节给出一个把这条口径写成程序的小工具，你可以拿它去称自己的 fork。
 
@@ -51,7 +51,7 @@ SDK for embedding in your own apps.
 | 主张 | 原文 | 本章怎么检验 |
 | --- | --- | --- |
 | 它是 **harness**，而且 **minimal** | "minimal terminal coding harness" | 2.2–2.4：称各层的重量 |
-| 不需要 **fork** | "without having to fork and modify pi internals" | 2.5：看四个下游实际做了什么 |
+| 不需要 **fork** | "without having to fork and modify pi internals" | 2.5：看三个下游实际做了什么 |
 | 有些东西**刻意不做** | "skips features like sub agents and plan mode" | 2.4：六条 "No X" |
 
 npm 包描述比 README 朴素得多：
@@ -232,20 +232,19 @@ No background bash.
 
 ## 2.5 为什么这个形状适合 fork
 
-README 说 "without having to fork"。但本书研究的四个下游，**全部** fork 或 vendor 了 pi 的代码（血缘见 [`BASELINE.md`](../../research/BASELINE.md#血缘谁和-pi-是什么关系)）。更有意思的是，它们拿走的层各不相同：
+README 说 "without having to fork"。但本书研究的三个下游，**全部** fork 或 vendor 了 pi 的代码（血缘见 [`BASELINE.md`](../../research/BASELINE.md#血缘谁和-pi-是什么关系)）。更有意思的是，它们拿走的层各不相同：
 
 | 下游 | 拿走了什么 | 内核循环 | provider 层 | 产品层 |
 | --- | --- | --- | --- | --- |
-| **step-harness** | 全部 10 个包，包名不改 | `agent-loop.ts`、`agent.ts` 与 pi **逐字节相同** | `ai/src` 逐字节相同 | 60,960 → **100,795**（+39,835） |
-| **Step-Code** | 重组为 7 个 `@step-harness/*` 包 | 833 行（+39，见下） | 23,668 → **12,178**，内置模型目录清空 | 60,960 → 79,475 |
-| **minimax-code** | 4 个包（agent / ai / coding-agent / tui），v0.79.1，放在 `third_party/pi-mono/` | 随 v0.79.1 原样 vendor | 同左 | 自写 26 个 workspace 包叠在上面 |
+| **Step-Code** | 重组为 7 个 `@step-harness/*` 包 + `apps/cli` | 833 行（+39，见下） | 23,668 → **12,178**，内置模型目录清空 | 60,960 → 79,475，另拆出 23,045 行的 `apps/cli` |
+| **minimax-code** | 4 个包（agent / ai / coding-agent / tui），v0.79.1，放在 `third_party/pi-mono/` | 在 v0.79.1 上加了几个钩子（742 → 877 行） | 在 vendor 的源码上打补丁 | 自写 26 个 workspace 包叠在上面 |
 | **kimi-code** | 只拿 `tui` | 不用，自研内核 | 不用 | 不用 |
 
-### 证据一：内核几乎没人改
+### 证据一：内核没人重写
 
-【代码事实】step-harness 的 `packages/agent/src/agent-loop.ts` 与 `agent.ts` 跟 pi 基准逐字节相同（`diff` 无输出）；它在 `agent` 包里的改动都落在未接线的 `src/harness/`（第 30 章 30.6 节），`src/index.ts` 的差异只是导出这些新文件。
+【代码事实】Step-Code 的 `packages/agent-core/src/agent.ts` 与 pi 基准只差一行 import（`@earendil-works/pi-ai` 换成 `@step-harness/providers`，`:9`）；`agent-loop.ts` 多了 39 行，下面细看。minimax-code 停在 v0.79.1，它的 `agent-loop.ts` 比同版本上游多出 135 行（742 → 877），补丁台账 `third_party/pi-mono/MINIMAX_CHANGES.md` 里落在 `packages/agent` 的几条，做的都是**给宿主开口子**：工具钩子返回 `terminateAgent` 让整个 agent 停下（`:91-97`）、工具真正开始执行时回调 `onToolExecutionStart`（`:99-105`）、steering 之后再查一次 `shouldStopAfterSteering`（`:83-89`）。没有一条改的是循环本身的决策。
 
-Step-Code 是唯一改了循环的下游，改动只有 +39 行，针对的是一个**服务端**的故障：
+Step-Code 对循环的改动只有 +39 行，针对的是一个**服务端**的故障：
 
 ```ts
 // Step-Code packages/agent-core/src/agent-loop.ts:220-225（节选）
@@ -274,16 +273,16 @@ minimax-code 走的是另一条路：在 `pnpm-workspace.yaml` 里把 `third_par
 
 ### 证据三：差异化全部长在产品层
 
-step-harness 的 +39,835 行几乎全在产品层的**边上**，而不是改写 pi 原有的核心代码：
+Step-Code 在 `coding-agent` 里的增量几乎全在产品层的**边上**，而不是改写 pi 原有的核心代码：
 
-| 新增或增长 | 行数 | 内容 |
+| 目录 | pi → Step-Code | 内容 |
 | --- | ---: | --- |
-| `coding-agent/src/step/` | +21,513（全新） | `auth.ts`、`login-flow.ts`、`onboarding.ts`、`mcp.ts`、`permissions.ts`、`telemetry.ts`、`secret-redaction.ts`、`build-identity.ts` … |
-| `coding-agent/src/extensions/` | +10,197 | `workflow/`（2,993）、`subagent/`（1,502）、`step-provider/`（998）… |
-| `coding-agent/src/modes/interactive/` | +4,998 | |
-| `coding-agent/src/core/` | +1,495 | 原有核心只增长 5% |
+| `coding-agent/src/step/` | 0 → **21,794**（全新，61 个文件） | `auth.ts`、`login-flow.ts`、`onboarding.ts`、`mcp.ts`、`permissions.ts`、`telemetry.ts`、`secret-redaction.ts`、`build-identity.ts`、`feedback/`（3,101）… |
+| `coding-agent/src/features/` | 0 → **12,504**（全新） | `workflow/`（3,505）、`subagent/`（1,820）、`step-schedule.ts`、`step-cron.ts`、`step-provider/`…；其中 `llama/`（1,453）是从 pi 的 `extensions/` 挪过来的 |
+| `coding-agent/src/modes/` | 20,333 → 2,287 | 只留 print / json / rpc；交互界面整体搬进新包 `apps/cli/src/ui/`（21,817 行） |
+| `coding-agent/src/core/` | 29,491 → 30,913 | 原有核心只增长 5% |
 
-Step-Code 则在 provider 层做减法：【代码事实】`packages/providers/src/api/` 只剩 13 个文件（pi 是 32 个），`providers/` 目录下 40 个厂商文件全部删除，`models.generated.ts` 生成出的内置模型目录是一个空对象 `export const MODELS: {} = {};`，另加一个 `step-provider/`。
+provider 层则做减法：【代码事实】`packages/providers/src/api/` 只剩 13 个文件（pi 是 32 个），`providers/` 目录从 87 个文件删到 4 个（`all.ts`、`faux.ts` 和两个数据声明文件），`models.generated.ts` 生成出的内置模型目录是一个空对象 `export const MODELS: {} = {};`，另加一个 `step-provider/`。
 
 minimax-code 的自有包里，`packages/agent-modules/` 下的目录名几乎可以和 README 的 "No X" 逐条对上：
 
@@ -305,36 +304,33 @@ flowchart LR
     T["终端 UI tui<br/>17,000 行"]
     C["产品层 coding-agent<br/>60,960 行"]
   end
-  sh["step-harness"]
   sc["Step-Code"]
   mm["minimax-code"]
   km["kimi-code"]
-  sh -- "原样" --> L & A & T
-  sh -- "+39,835" --> C
   sc -- "+39 行" --> L
   sc -- "砍到 12,178" --> A
-  sc -- "重组" --> C
-  mm -- "v0.79.1 原样" --> L & A & T & C
+  sc -- "重组 + 拆出 CLI" --> C
+  mm -- "v0.79.1 + 补丁" --> L & A & T & C
   km -- "只拿这个" --> T
 ```
 
-*图 2-4 四个下游从 pi 拿走的层。没有人重写内核；分歧都发生在 provider 层和产品层。*
+*图 2-4 三个下游从 pi 拿走的层。没有人重写内核；分歧都发生在 provider 层和产品层。*
 
 ### 那 "without having to fork" 错了吗
 
-没有错，只是它说的不是厂商。【推断】pi 的扩展系统服务的是**想让 pi 适应自己工作流的用户**：加一个工具、拦一次调用、换一个 provider、装一个第三方包。而四个下游要改的是**产品身份**：登录与账号体系、首启引导、默认模型、遥测上报到哪、品牌与版本号。step-harness 的 `src/step/` 目录清单（上表）几乎就是这份需求的逐项列举。这些东西在 pi 里属于 `coding-agent` 的内部实现，不是扩展点。
+没有错，只是它说的不是厂商。【推断】pi 的扩展系统服务的是**想让 pi 适应自己工作流的用户**：加一个工具、拦一次调用、换一个 provider、装一个第三方包。而三个下游要改的是**产品身份**：登录与账号体系、首启引导、默认模型、遥测上报到哪、品牌与版本号。Step-Code 的 `src/step/` 目录清单（上表）几乎就是这份需求的逐项列举。这些东西在 pi 里属于 `coding-agent` 的内部实现，不是扩展点。
 
-还有一个非技术因素。【代码事实】pi 两份 README 的第一句话都是 "New issues and PRs from new contributors are auto-closed by default."（根 `README.md:11`、`packages/coding-agent/README.md:11`）。【推断】对下游来说，这意味着「把改动提回上游」不是默认路径，fork 之后基本只能长期自己维护 diff。第 24 章讨论这笔账怎么算。
+还有一个非技术因素。【代码事实】pi 两份 README 的第一句话都是 "New issues and PRs from new contributors are auto-closed by default."（根 `README.md:11`、`packages/coding-agent/README.md:11`）。【推断】对下游来说，这意味着「把改动提回上游」不是默认路径，fork 之后基本只能长期自己维护 diff。minimax-code 的补丁台账是一个实例：37 条本地改动里，35 条写着 "Upstream PR: not opened" 或 "not created"，其中不少条目自己就标着 "generic upstream material" 或 "generic upstreamable"；唯一一条 "already merged"（`MINIMAX_CHANGES.md:188-190`）是从上游**往回**挪的补丁。【代码事实】第 24 章讨论这笔账怎么算。
 
 ### 判断依据
 
 一个框架适不适合被 fork，可以用三个问题检验。pi 在这三个问题上的回答都是「是」：
 
-1. **内核是不是小到不需要改？** 794 行、不认识任何领域概念。三个拿了内核的下游，两个原样保留（step-harness、minimax-code），一个只加了 39 行（Step-Code）。【代码事实】
+1. **内核是不是小到不需要重写？** 794 行、不认识任何领域概念。两个拿了内核的下游都没有重写它：Step-Code 加了 39 行重采样，minimax-code 加的是给宿主用的钩子。【代码事实】
 2. **依赖是不是单向的、有叶子？** 是。产品层在顶端，`tui`/`protocol`/`telemetry` 是叶子，kimi-code 只拿走了 `tui`。【代码事实】
 3. **差异化需要的东西是不是集中在一层？** 是。登录、引导、权限、MCP、遥测、默认模型——全在产品层和 provider 层。【推断】
 
-反过来，这个形状也决定了 fork 的**代价落在哪里**：产品层是 pi 改动最频繁的地方（每月 400–530 次提交，`research/pi/01-product-teardown.md` §1.6），而它恰好也是下游改得最多的地方。改得越多，同步上游越难。第 30 章 30.6 节的 step-harness「同一处改两遍」就是一个具体例子。
+反过来，这个形状也决定了 fork 的**代价落在哪里**：产品层是 pi 改动最频繁的地方（每月 400–530 次提交，`research/pi/01-product-teardown.md` §1.6），而它恰好也是下游改得最多的地方。改得越多，同步上游越难。Step-Code 的压缩改动就是一个具体例子：同一组改动（`reserveTokens` 调到 24576、新增 `pickSummaryMaxTokens`、30 行的八段式摘要格式）在 v2 的 `agent-core/src/harness/compaction/compaction.ts` 和 v1 的 `coding-agent/src/core/compaction/compaction.ts` 里各有一份，逐字相同（第 30 章 30.6 节）。
 
 ---
 
@@ -367,7 +363,7 @@ export function isCountedSource(path: string): boolean {
 分层是一张有序的前缀表。顺序就是优先级——794 行的内核文件和未接线的 v2 harness 必须排在 `packages/agent/` 前面，否则会被它吞掉：
 
 ```ts
-// examples/ch02-weigh-layers/src/presets.ts:6-13
+// examples/ch02-weigh-layers/src/presets.ts:9-17
 export const PI_LAYERS: readonly Layer[] = [
   { name: "内核 L1（agent-loop.ts）", prefixes: ["packages/agent/src/agent-loop.ts"] },
   { name: "v2 harness（未接线）", prefixes: ["packages/agent/src/harness/"] },
@@ -375,25 +371,27 @@ export const PI_LAYERS: readonly Layer[] = [
   { name: "Provider 适配（ai）", prefixes: ["packages/ai/"] },
   { name: "终端 UI（tui）", prefixes: ["packages/tui/"] },
   { name: "产品层（coding-agent）", prefixes: ["packages/coding-agent/"] },
+  { name: "CLI 外壳（apps/cli）", prefixes: ["apps/cli/"] },
 ];
 ```
 
-对 pi 基准和 step-harness 基准运行：
+fork 常常会给包改名。Step-Code 把 `packages/agent` 改成了 `packages/agent-core`、`packages/ai` 改成了 `packages/providers`，所以它有自己的一张表 `STEP_CODE_LAYERS`：路径不同，**层名和顺序必须与 `PI_LAYERS` 完全一致**，对照时才能按层名逐行对齐（`presets.test.ts` 专门检查这一点）。`--preset pi,step-code` 给两个仓库各配一张表。对 pi 基准和 Step-Code 基准运行：
 
 ```text
-$ npm start -- --preset pi ../pi ../step-harness
-                                 pi  step-harness         Δ
-  内核 L1（agent-loop.ts）      794           794         0
-  v2 harness（未接线）       10,065        11,289    +1,224
-  运行时 v1（agent 其余）     1,781         1,796       +15
-  Provider 适配（ai）        23,668        23,668         0
-  终端 UI（tui）             17,000        17,106      +106
-  产品层（coding-agent）     60,960       100,795   +39,835
-  其余                        9,361         9,361         0
-  合计                      123,629       164,809   +41,180
+$ npm start -- --preset pi,step-code ../pi ../Step-Code
+                                 pi  Step-Code         Δ
+  内核 L1（agent-loop.ts）      794        833       +39
+  v2 harness（未接线）       10,065     11,289    +1,224
+  运行时 v1（agent 其余）     1,781      1,813       +32
+  Provider 适配（ai）        23,668     12,178   −11,490
+  终端 UI（tui）             17,000     17,359      +359
+  产品层（coding-agent）     60,960     79,475   +18,515
+  CLI 外壳（apps/cli）            0     23,045   +23,045
+  其余                        9,361      1,774    −7,587
+  合计                      123,629    147,766   +24,137
 ```
 
-一张表把 2.5 节的结论都摆出来了：内核没动，provider 层没动，97% 的增量在产品层。
+一张表把 2.5 节的结论都摆出来了：内核只多 39 行；provider 层砍掉一半；产品层加上拆出去的 CLI 外壳一共 +41,560，是全部增长的来源。「其余」那行的 −7,587，是因为 pi 的 `server`、`client`、`protocol`、`evals`、`session-backends` 五个包 Step-Code 都没拿，只多了自己的 `config` 和 `contracts`（`telemetry` 两边都有）。
 
 几点实现上的取舍：
 
@@ -402,7 +400,7 @@ $ npm start -- --preset pi ../pi ../step-harness
 3. **读不到的文件单独报告。** 跟踪了但工作区里没有的文件（删除未提交、断掉的符号链接）不计入行数，但会在 stderr 上报数量，不会悄悄少算。
 4. **行数与 `wc -l` 相同**：数换行符，最后一行没有换行就不算。
 
-`npm test` 跑 18 个用例，覆盖口径、分层优先级、对照对齐和仓库边界（不存在的路径、非 git 目录、跟踪了但被删除的文件）。
+`npm test` 跑 23 个用例，覆盖口径、分层优先级、两张预设的层名对齐、对照对齐和仓库边界（不存在的路径、非 git 目录、跟踪了但被删除的文件）。
 
 ---
 
@@ -411,5 +409,5 @@ $ npm start -- --preset pi ../pi ../step-harness
 - **复杂度重心在产品层**：`coding-agent` 60,960 行占 49%，加上 provider 层（19%）和终端 UI（14%），三件「脏活」占 82%。内核循环 794 行，占 0.6%。
 - **内核不认识代码**：`agent-loop.ts` 里没有 `bash`、`file`、`edit`、`git`、`cwd`；「它是编码助手」由产品层的工具实现和默认工具集（`agent-session.ts:2801-2803`）决定。
 - **"minimal" 只对内核成立**。更准确的概括是 README 里的六条 "No X"：pi 提供机制、不提供策略。
-- **这个形状适合 fork**：内核小到没人需要改（step-harness 逐字节保留，Step-Code 只加 39 行），依赖单向且有叶子（kimi-code 只拿走 `tui`），差异化需求集中在产品层与 provider 层。
+- **这个形状适合 fork**：内核小到没人需要重写（Step-Code 只加 39 行，minimax-code 只加钩子），依赖单向且有叶子（kimi-code 只拿走 `tui`），差异化需求集中在产品层与 provider 层。
 - **代价也集中在同一处**：下游改得最多的产品层，恰好也是上游改得最频繁的地方。

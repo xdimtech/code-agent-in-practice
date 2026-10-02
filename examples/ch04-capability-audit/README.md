@@ -20,7 +20,7 @@ npm start -- --manifest my.json /path/to/repo            # 换成自己的清单
 npm test                                                 # 23 个用例
 ```
 
-需要 Node ≥ 22.6（用 `--experimental-strip-types` 直接运行 TypeScript）和 `git`。要复现正文的数字，先把 pi 与 step-harness checkout 到 [版本表](../../research/BASELINE.md#版本表) 里的 commit。
+需要 Node ≥ 22.6（用 `--experimental-strip-types` 直接运行 TypeScript）和 `git`。要复现正文的数字，先把 pi 与 Step-Code checkout 到 [版本表](../../research/BASELINE.md#版本表) 里的 commit。
 
 | 文件 | 内容 |
 | --- | --- |

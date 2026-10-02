@@ -1,6 +1,6 @@
 # 3. Agent Loop 深度拆解
 
-> 本章是 pi 拆解的核心。`pi` 是 step-harness / Step-Code / minimax-code / kimi-code 的公共上游（三家厂商、四个仓库），**读懂本章才能判断那些 diff 里哪些是自己的判断力**。
+> 本章是 pi 拆解的核心。`pi` 是 Step-Code / minimax-code / kimi-code 的公共上游（三家厂商、三个仓库），**读懂本章才能判断那些 diff 里哪些是自己的判断力**。
 
 ## 3.1 三层结构
 
@@ -130,7 +130,7 @@ const executedToolBatch =
 
 pi 的处理是一刀切：整批失败，不做任何"部分可信"的判断。CHANGELOG 记录了这是修复而非初始设计（`packages/agent/CHANGELOG.md:136`，issue #6285，原症状是"等一个永远不会到的 tool result"）。
 
-> 这条对四个衍生仓库都适用——**检查它们的 vendor 版本有没有这段**，是判断其 pi 基线新旧的一个快速探针。
+> 这条对三个衍生仓库都适用——**检查它们的 vendor 版本有没有这段**，是判断其 pi 基线新旧的一个快速探针。
 
 ### 批量 terminate 要求全体同意
 
@@ -331,7 +331,7 @@ duplicate_tool_invocation / provisioned_entry_mismatch / invalid_deferred_handle
 ### 对拆解的直接影响
 
 1. **`harness/compaction/compaction.ts`（848 行）与 `coding-agent/src/core/compaction/compaction.ts`（1,012 行）不是重复代码，是 v2 与 v1。** 生效的是后者（`agent-session.ts:65-66` 从 `./compaction/index.ts` 导入）。两者的差异（`retainedTail` 自洽条目 vs `firstKeptEntryId` 指针、`Result<_, CompactionError>` vs 抛异常、`Models` 抽象 vs 手传 apiKey）全部是 v2 设计选择，且与"条目必须自洽以支持持久记录恢复"一致。详见[第 4 章 §4.3](./04-context-engineering.md)。
-2. **四个衍生仓库 vendor 的都是 v1。** 他们 fork 的时间点上 v2 还是脚手架，所以他们的 diff 都建立在 `Agent` + `agentLoop` + JSONL 会话树之上。
+2. **三个衍生仓库 vendor 的都是 v1。** 他们 fork 的时间点上 v2 还是脚手架，所以他们的 diff 都建立在 `Agent` + `agentLoop` + JSONL 会话树之上。
 3. **`packages/agent` 有独立的 harness 测试配置**（`vitest.harness.config.ts`），只跑 `test/harness/**` 并单独统计覆盖率，覆盖范围是 `src/harness/**` + `src/agent.ts` + `src/agent-loop.ts`。v2 有自己的质量门。
 
 ---

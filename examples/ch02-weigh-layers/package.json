@@ -8,6 +8,6 @@
   "engines": { "node": ">=22.6" },
   "scripts": {
     "start": "node --experimental-strip-types --no-warnings src/main.ts",
-    "test": "node --experimental-strip-types --no-warnings --test src/filter.test.ts src/layers.test.ts src/report.test.ts src/repo.test.ts"
+    "test": "node --experimental-strip-types --no-warnings --test src/filter.test.ts src/layers.test.ts src/report.test.ts src/repo.test.ts src/presets.test.ts"
   }
 }

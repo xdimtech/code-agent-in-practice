@@ -476,7 +476,7 @@ flowchart LR
 
 ## 29.5 各家的选择
 
-| 维度 | pi | `step-harness` / `Step-Code` | `minimax-code` | `deepseek-harness`（对照） | `ZCode`（对照） |
+| 维度 | pi | `Step-Code` | `minimax-code` | `deepseek-harness`（对照） | `ZCode`（对照） |
 | --- | --- | --- | --- | --- | --- |
 | 结果落盘顺序 | 调用顺序（`Promise.all`，`agent-loop.ts:538-546`） | 同 pi | 同 pi | 调用顺序：`commitReady` 只沿连续的已完成槽位前进（`tool-calls.ts:146-161`） | 调用顺序：`drain` 按 `toolCalls` 顺序逐个 `await`（`streaming-tool-coordinator.ts:128-137`） |
 | 并发上限 | 无（整批 `Promise.all`） | 同 pi | 同 pi | 默认 10（`constants.ts:6` `DEFAULT_MAX_PARALLEL_TOOL_CALLS`） | 未核实 |

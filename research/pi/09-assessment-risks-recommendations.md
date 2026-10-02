@@ -128,7 +128,7 @@ CHANGELOG 明说这是有意的（"compile-complete scaffold … while durable e
 
 > **勘误（写第 30 章时复核）**：「丢了」不成立。两道护栏都是在 v2 压缩最后一次变更（`44289550a`，2026-08-04）**之后**才加进 v1 的：toolCall 护栏来自 `90305d90a`（2026-08-17），`getSummarizationFailure` 来自 `97fa14e39`（2026-08-24，#7048）。准确的说法是「v2 冻结后 v1 继续演化（10 次提交 vs 0 次），v2 没跟上」。另，规格 `docs/harness.md` 的恢复模型是寄存器（「No reducer exists to have a bug」，`:610`），与代码里的 `reducer.ts` 不一致。详见[第 30 章](../../book/05-internals/ch30-v2-runtime.md) 30.3、30.4 节。
 
-> **对下游的直接意义**：四个衍生仓库 vendor 的全部是 v1。他们 fork 的时间点上 v2 还是脚手架，所以他们的 diff 都建立在 `Agent` + `agentLoop` + JSONL 会话树之上。**未来如果 pi 切到 v2，它们的 diff 会集体失去上游基线。**
+> **对下游的直接意义**：三个衍生仓库 vendor 的全部是 v1。他们 fork 的时间点上 v2 还是脚手架，所以他们的 diff 都建立在 `Agent` + `agentLoop` + JSONL 会话树之上。**未来如果 pi 切到 v2，它们的 diff 会集体失去上游基线。**
 >
 > **勘误**：「fork 时 v2 还是脚手架」对 `minimax-code` 不成立——它内嵌的 pi v0.79.1 早于 `44289550a`，其中的 `agent-harness.ts` 是那版能工作的 1064 行实现（与上游逐字节相同）。四家的产品代码确实都只用 v1（`third_party/` 之外引用 `AgentHarness` 的文件数为 0）。
 

@@ -12,7 +12,7 @@ export interface BuildOptions {
   readonly appendSystemPrompt?: string;
   readonly contextFiles?: readonly ContextFile[];
   readonly skills?: readonly Skill[];
-  /** step-harness 的 promptAppendix 位置：技能之后、工作目录之前。pi 没有这一段。 */
+  /** Step-Code 的 promptAppendix 位置：技能之后、工作目录之前。pi 没有这一段。 */
   readonly appendix?: string;
   readonly cwd: string;
 }

@@ -1,4 +1,4 @@
-# 第 31 章 阶跃星辰：Step-Code / step-harness
+# 第 31 章 阶跃星辰：Step-Code
 
 > 基准：pi `b79e4cc8` (v0.84.4)　·　[版本表](../../research/BASELINE.md)　·　[参与指南](../../CONTRIBUTING.md)
 

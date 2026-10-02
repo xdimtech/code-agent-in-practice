@@ -13,7 +13,7 @@
 
 - `research/pi/07-extensibility.md` §7.5
 - `research/pi/01-product-teardown.md` §1.5
-- 对照：`step-harness` `fe153835`
+- 对照：`Step-Code` `7dd66cb`
 - 配套代码：[`examples/ch11-custom-provider/`](../../examples/ch11-custom-provider/)
 
 ---
@@ -32,7 +32,7 @@
 | **4** | `registerProvider` 的粒度 | `core/extensions/types.ts:1431-1434` |
 | **0** | 宿主对 `streamSimple` 钩子契约的检查 | `core/extensions/types.ts:1516-1521` |
 
-前六个数字讲的是 pi 怎么把几十家的差异收进一个注册表、一个适配器（11.1–11.7）；最后一个数字是本章最需要你记住的坑（11.8）。然后看 step-harness 怎么改了合成顺序（11.9），最后动手写一个最小实现（11.10）。
+前六个数字讲的是 pi 怎么把几十家的差异收进一个注册表、一个适配器（11.1–11.7）；最后一个数字是本章最需要你记住的坑（11.8）。然后看 Step-Code 怎么改了合成顺序（11.9），最后动手写一个最小实现（11.10）。
 
 本章引用的源码路径，除非特别说明，`core/…` 相对于 `packages/coding-agent/src/`，`ai/src/…` 和 `docs/…` 分别相对于 `packages/` 和 `packages/coding-agent/`。
 
@@ -631,22 +631,25 @@ flowchart TD
 
 ---
 
-## 11.9 下游对照：step-harness 把合成顺序倒了过来
+## 11.9 下游对照：Step-Code 把合成顺序倒了过来
 
-step-harness 把阶跃星辰的模型做成一个内置扩展 `step-provider`。它碰到的正是 11.2 节的问题：产品默认的模型列表由扩展给出，按 pi 的规则会整体替换；可旧版 Step CLI 的用户在 models.json 里留着自定义模型，升级后不能丢。
+阶跃的开源版 Step-Code 把阶跃星辰的模型做成一个内置扩展 `step-provider`。它碰到的正是 11.2 节的问题：产品默认的模型列表由扩展给出，按 pi 的规则会整体替换；可旧版 StepCode 的用户在 models.json 里留着自定义模型，升级后不能丢。
 
 它的办法是给 `ProviderConfig` 加了两个字段：
 
 ```ts
-// step-harness: packages/coding-agent/src/core/extensions/types.ts:1544-1546（节选）
-mergeModelsJson?: boolean;
-normalizeModels?: (models: Model<Api>[]) => Model<Api>[];
+// Step-Code: packages/coding-agent/src/core/extensions/types.ts:1582-1585
+	/** Re-apply models.json after product default models. */
+	mergeModelsJson?: boolean;
+	/** Normalize the fully composed model list before it is exposed to callers. */
+	normalizeModels?: (models: Model<Api>[]) => Model<Api>[];
 ```
 
 合成时，打开 `mergeModelsJson` 的扩展先落地，models.json **再压上去**，最后跑一遍 `normalizeModels`：
 
 ```ts
-// step-harness: packages/coding-agent/src/core/provider-composer.ts:242-252
+// Step-Code: packages/coding-agent/src/core/provider-composer.ts:241-252
+/** Compose extension models and an optional user models.json overlay. */
 function applyComposedModels(
 	providerId: string,
 	baseModels: readonly Model<Api>[],
@@ -660,44 +663,43 @@ function applyComposedModels(
 }
 ```
 
-`step-provider` 两个都打开了（`extensions/step-provider/index.ts:245-266`）。注释写得清楚：内置目录只是默认值，要保住从旧版迁移来的、以及用户后来加的模型；models.json 归用户所有，可能比 provider 默认值活得久，所以最后要规范化一遍，「as a last line of defense」。
+`step-provider` 两个都打开了（`packages/coding-agent/src/features/step-provider/index.ts:37-43`）。注释写得清楚：内置目录只是离线、登录前的基线，要保住从旧版迁移来的、以及用户后来加的模型；models.json 归用户所有，可能比 provider 默认值活得久，所以最后要规范化一遍，「as a last line of defense」。
 
-规范化做的事是这样的：
+规范化做的事只有一行：
 
 ```ts
-// step-harness: packages/coding-agent/src/extensions/step-provider/index.ts:285-295（节选）
-function normalizeStepModel(model: Model<Api>, canonicalBaseUrl: string): Model<Api> {
-	if (STEP_BUILTIN_MODEL_IDS.has(model.id.toLowerCase())) {
-		// Step owns these ids. Always restore both the wire dialect and endpoint,
-		// including files that already say `anthropic-messages` but still point at
-		// an old proxy host. Otherwise the models.json overlay can override the
-		// provider default and recreate the 404 after a successful login.
-		return { ...model, api: "anthropic-messages", baseUrl: canonicalBaseUrl };
-	}
-	if (model.api !== "anthropic-messages") return model;
-	return { ...model, baseUrl: normalizeStepAnthropicBaseUrl(model.baseUrl) };
+// Step-Code: packages/providers/src/step-provider/index.ts:290-297
+/**
+ * Every Step model uses the active profile's OpenAI endpoint and dialect.
+ * Restore both so a stale models.json overlay (e.g. an old proxy host or the
+ * legacy Anthropic dialect) cannot misroute a Step model.
+ */
+export function normalizeStepModel(model: Model<Api>, openaiBaseUrl: string): Model<Api> {
+	return { ...model, api: STEP_MODEL_API, baseUrl: openaiBaseUrl };
 }
 ```
 
+`STEP_MODEL_API` 是 `"openai-completions"`（`:92`），`openaiBaseUrl` 由当前 profile 推出来（`stepOpenAiBaseUrl`，`:618-620`）。注意它**不分模型 id**：只要挂在 `step` 这个 provider 下，不管是内置模型还是用户在 models.json 里加的，`api` 和 `baseUrl` 都会被改成官方值。CLI 的启动配置里也明说不再改写用户文件，靠这个钩子在每次启动时兜底（`apps/cli/src/bootstrap/config.ts:30-35`）。
+
 【推断】按「谁选了什么、代价是什么」来看：
 
-| | pi | step-harness（`step-provider`） |
+| | pi | Step-Code（`step-provider`） |
 | --- | --- | --- |
 | 扩展与 models.json 的先后 | models.json 在下，扩展在上 | 扩展在下，models.json 在上 |
-| 用户追加的模型 | 被扩展的 `models` 替换掉 | 保留 |
-| 用户改 Step 自有模型的地址 | 不涉及（被替换） | **改不了**，规范化强制改回官方地址 |
-| 解决的问题 | 扩展作者完全掌控列表 | 升级不丢用户模型，旧代理地址不再导致 404 |
+| 用户追加的模型 | 被扩展的 `models` 替换掉 | 保留，但地址和方言被统一 |
+| 用户改 `step` 下模型的 `baseUrl` / `api` | 不涉及（被替换） | **改不了**，规范化强制改回当前 profile 的官方地址 |
+| 解决的问题 | 扩展作者完全掌控列表 | 升级不丢用户模型，旧代理地址、旧 Anthropic 方言不再导致请求失败 |
 
-代价落在最后一行：一个想把 Step 的官方模型改走公司网关的用户，在 models.json 里写的 `baseUrl` 会被静默改回去。这是为了修一个真实的 404（旧配置指向已下线的代理），用「Step 拥有这些 id」换来的。它是一个 opt-in 字段，只影响打开它的扩展；pi 自己的默认行为没变。
+代价落在第三行：一个想让 Step 模型走公司网关的用户，在 models.json 里给 `step` 写的 `baseUrl` 会被静默改回去；`contextWindow`、`maxTokens` 这类字段则照常生效。这是用「`step` 这个 provider 下的一切都是 Step 的」换来的。想走网关，得另起一个 provider id，Step-Code 为此留了 `stepcode` 配置里的自定义 provider（`apps/cli/src/main.ts:197-199`）。它是一个 opt-in 字段，只影响打开它的扩展；pi 自己的默认行为没变。
 
-还有一处值得注意：`step` 的 `auth` 子命令不加载扩展，`step-cli.ts:203-207` 就在 `authRuntimeSetup` 里直接对 runtime 调 `registerProvider`；主路径则由扩展调用 `pi.registerProvider`（`step-provider/index.ts:303`）。两条路用的是同一个 `createStepProviderConfig…` 工厂，配置只有一份来源。前者绕过了加载队列，校验失败会直接抛出，而不是 fail-open。
+还有一处值得注意：`auth` 子命令不加载扩展，CLI 就在 `authRuntimeSetup` 里直接对 runtime 调 `registerProvider`（`apps/cli/src/main.ts:195-200`）；主路径则由产品扩展调用 `registerStepProvider(pi)`（`packages/coding-agent/src/features/step.ts:96`）。两条路用的是同一个 `createStepProviderConfig…` 工厂（`features/step-provider/index.ts:23-56`），配置只有一份来源。前者绕过了加载队列，校验失败会直接抛出，而不是 fail-open。
 
 ### 判断依据
 
-- **step-harness 新增 `mergeModelsJson`、`normalizeModels`**，把 models.json 放到扩展之上，再统一规范化（`types.ts:1544-1546`、`provider-composer.ts:242-252`）。【代码事实】
-- **Step 自有模型的 api 和 baseUrl 被强制改回官方值**，用户覆盖不了（`step-provider/index.ts:285-295`）。【代码事实】
+- **Step-Code 新增 `mergeModelsJson`、`normalizeModels`**，把 models.json 放到扩展之上，再统一规范化（`types.ts:1582-1585`、`provider-composer.ts:241-252`）。【代码事实】
+- **`step` 下所有模型的 api 和 baseUrl 都被强制改回当前 profile 的官方值**，不分内置与自定义，用户覆盖不了（`providers/src/step-provider/index.ts:295-297`）。【代码事实】
 - **这是 opt-in 的扩展点**，不改变 pi 的默认合成顺序。【代码事实】
-- **两种顺序各有道理**：产品方要保证自家模型能用，用户要保证自己的配置算数；把冲突的字段限定到「自家拥有的 id」上，是一个范围很小的折中。【推断】
+- **两种顺序各有道理**：产品方要保证自家模型能用，用户要保证自己的配置算数；Step-Code 把冲突字段限定在 `api`、`baseUrl` 两个上，其余字段仍由用户说了算，想改地址就换一个 provider id。【推断】
 
 ---
 
@@ -897,7 +899,7 @@ $ npm start
 ### 接入自家模型的三个教训
 
 1. **能走内置适配器就别写 `streamSimple`。** 只改 `baseUrl`、加 `models`、写 `compat`，三种粒度都不碰流式代码，钩子、重试、四种方言、溢出识别全部自动生效。非写不可，就学 gitlab-duo：换好凭证、改好模型之后委托给内置适配器。自己发请求的 `streamSimple` 会悄悄绕过所有 `before_provider_request` 扩展（演示第 6 段）。
-2. **扩展给的 `models` 是替换，不是追加。** 用户在 models.json 里加的模型会跟着消失，`modelOverrides` 却还压在上面。要追加，就先读当前列表，拼好再整体交回去；或者像 step-harness 那样，在你自己的宿主里把合成顺序改成可选的（演示第 2 段）。
+2. **扩展给的 `models` 是替换，不是追加。** 用户在 models.json 里加的模型会跟着消失，`modelOverrides` 却还压在上面。要追加，就先读当前列表，拼好再整体交回去；或者像 Step-Code 那样，在你自己的宿主里把合成顺序改成可选的（演示第 2 段）。
 3. **重新注册时，把 `api` 和 `baseUrl` 都再写一遍。** 校验只看这一次传进来的配置，存储却是浅合并的。少写一个字段，结果是校验失败、旧配置原样保留，看起来像「没生效」（演示第 3 段）。
 
 ---
@@ -911,5 +913,5 @@ $ npm start
 - **26 家共用一个 OpenAI 兼容适配器**：发出去的差异靠 compat 猜测加显式覆盖，收回来的四种方言写死在解析逻辑里；新 provider id 挂在自定义网关上时猜测失效，要把 compat 写全。
 - **自动压缩依赖错误信息匹配**：25 条正则加两条静默溢出判断；自家模型的报错不在其中，就用 `message_end` 改写成 `context_length_exceeded:`。
 - **`streamSimple` 的钩子契约只写在注释里**（`types.ts:1516-1521`）：官方文档模板和 `custom-provider-anthropic` 示例都没有遵守，宿主也不检查；违约时脱敏一类的扩展被静默绕过。委托内置适配器的写法天然守约。
-- **step-harness 用 opt-in 的 `mergeModelsJson` / `normalizeModels`** 把 models.json 放到扩展之上，保住了升级用户的模型，代价是 Step 自有模型的地址用户改不了。
+- **Step-Code 用 opt-in 的 `mergeModelsJson` / `normalizeModels`** 把 models.json 放到扩展之上，保住了升级用户的模型，代价是 `step` 下模型的地址和方言用户改不了。
 - **配套代码**复现了注册表的全部规则、一个纯 reducer 的兼容适配器和一个只能发现、不能阻止的契约检查器，演示输出逐段对应本章各节。

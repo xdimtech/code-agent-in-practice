@@ -6,11 +6,10 @@
 
 从 code agent 工程专家视角，对 `pi`（Pi Agent Harness）做的系统性拆解。
 
-**pi 是这批研究底稿里最该先读的一份。** 它是三家中国厂商、四个下游仓库的公共上游：
+**pi 是这批研究底稿里最该先读的一份。** 它是三家中国厂商、三个下游仓库的公共上游：
 
 | 下游 | 与 pi 的关系 |
 | --- | --- |
-| **step-harness** | 硬分叉 |
 | **Step-Code** | 重组式衍生 |
 | **minimax-code** | 整包 vendor |
 | **kimi-code** | 仅 TUI 层 |
@@ -133,7 +132,7 @@ v2 的技术核心是**单写者持久记录日志**，原则硬得罕见（`red
 
 > Restore must **reject** such states rather than repair or continue it.
 
-**对下游的意义**：四个衍生仓库 vendor 的全部是 v1。未来 pi 若切到 v2，它们的 diff 会集体失去上游基线。
+**对下游的意义**：三个衍生仓库 vendor 的全部是 v1。未来 pi 若切到 v2，它们的 diff 会集体失去上游基线。
 
 ### 数据速览
 

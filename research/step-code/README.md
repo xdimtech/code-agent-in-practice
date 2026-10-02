@@ -9,7 +9,7 @@
 | 版本 | 0.1.0 |
 | 与 pi 的关系 | 见 [血缘图谱](../BASELINE.md#血缘谁和-pi-是什么关系) |
 
-pi 的**重构式衍生**：包被重命名（`ai`→`providers`、`agent`→`agent-core`、`protocol`→`contracts/src/wire`），另加了 16 道架构 lint 闸门。同厂的 `step-harness`（内部版，pi 整树硬拷贝，基准 `fe153835` / v0.3.1）在研究工作区已有一份完整拆解，将与本目录一并发布。
+pi 的**重构式衍生**：包被重命名（`ai`→`providers`、`agent`→`agent-core`、`protocol`→`contracts/src/wire`），另加了 16 道架构 lint 闸门。本书关于阶跃星辰的分析只以这个开源仓库为准。
 
 ---
 

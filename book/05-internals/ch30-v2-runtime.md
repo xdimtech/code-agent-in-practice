@@ -15,7 +15,7 @@
 - `research/pi/03-agent-loop.md` §3.9
 - `research/pi/09-assessment-risks-recommendations.md` §9.4
 - pi `packages/agent/docs/harness.md`（v2 的实现规格，2941 行）、`packages/agent/src/harness/`
-- 对照：`deepseek-harness` `packages/core/session/src/repair.ts`；衍生方：`step-harness` 提交 `795bd71`、`minimax-code` `third_party/pi-mono`
+- 对照：`deepseek-harness` `packages/core/session/src/repair.ts`；衍生方：`Step-Code` `7dd66cb9`、`minimax-code` `third_party/pi-mono`
 - 配套代码：[`examples/ch30-durable-tools/`](../../examples/ch30-durable-tools/)
 
 ---
@@ -454,13 +454,13 @@ flowchart TB
 
 ## 30.6 对 fork 方意味着什么
 
-【代码事实】四个基于 pi 的衍生方（`step-harness`、`Step-Code`、`minimax-code`、`kimi-code`），产品代码都跑在 v1 上：在 `third_party/` 之外引用 `AgentHarness` 的文件数为 0——唯一的例外是 `step-harness` 原样带着的那份 `coding-agent/src/server/create-harness.ts`，和上游一样没有调用方。
+【代码事实】三个基于 pi 的衍生方（`Step-Code`、`minimax-code`、`kimi-code`），产品代码都跑在 v1 上。minimax-code 在 `third_party/` 之外引用 `AgentHarness` 的文件数为 0；kimi-code 只拿了 TUI；Step-Code 产品代码里唯一的引用是随上游带过来的 `coding-agent/src/server/create-harness.ts`，它唯一的调用方是测试 `test/server/create-harness.test.ts`，和上游一样没有产品调用方。
 
 但 v2 仍然以三种方式影响它们。
 
 **一、`minimax-code` 内嵌了一个上游已经删掉的 harness。** 它在 `third_party/pi-mono` 里内嵌 pi v0.79.1，其中的 `agent-harness.ts` 与上游 v0.79.1 的 1064 行**逐字节相同**——正是 `44289550a` 拆掉之前那版能工作的实现。【推断】这意味着如果 MiniMax 将来想用 v2，它手里的版本既不是上游当前的接口（脚手架），也不会再收到上游修复；跟进上游需要的不是合并，而是换一套 API。
 
-**二、`step-harness` 一个修复做两遍。** 它的提交 `795bd71`（2026-09-03）在同一次提交里分别修改了 v2 的 `packages/agent/src/harness/compaction/compaction.ts`（+183）和 v1 的 `packages/coding-agent/src/core/compaction/compaction.ts`（+170），全提交 11 个文件、+663/−238。它的 `coding-agent/src/core/compaction/projection.ts:1-11` 把 v1 这边的 `utils.ts`/`compaction.ts` 称为「package-local mirror copies」，并从 pi-agent-core 重新导出投影逻辑；v2 一侧另有 6 个 `projection-*.ts`（共 1117 行），并通过提交 `ea330af` 加了 `--context-projection` 开关。【推断】30.3 节说的「同一修复需要做两次」，在上游只是潜在成本，在衍生方这里已经是每次提交的实际成本。
+**二、`Step-Code` 一组改动做两份。** 它对压缩的改动——`reserveTokens` 从 16384 调到 24576、新增按模型输出上限取值的 `pickSummaryMaxTokens`、30 行的八段式摘要格式 `SUMMARY_FORMAT`——在 v2 的 `packages/agent-core/src/harness/compaction/compaction.ts`（`:168`、`:178`、`:449`）和 v1 的 `packages/coding-agent/src/core/compaction/compaction.ts`（`:154`、`:164`、`:504`）里各有一份，`pickSummaryMaxTokens` 和 `SUMMARY_FORMAT` 两份逐字相同。【代码事实】它自己也意识到了这件事：`coding-agent/src/core/compaction/projection.ts:1-11` 的注释把 v1 这边的 `utils.ts` / `compaction.ts` 称为「package-local mirror copies」，而新写的上下文投影（v2 一侧 6 个 `projection*.ts`，共 1117 行）选择从 `@step-harness/agent-core` 直接重新导出，不再维护第二份；投影默认关闭，要用 `--context-projection lightweight-v1` 打开（`cli/args.ts:459`、`settings-manager.ts:867`）。【推断】30.3 节说的「同一修复需要做两次」，在上游只是潜在成本，在衍生方这里已经是实际成本——而 Step-Code 对新代码的处理（只留一份、另一侧重新导出）正是减少这笔成本的办法。
 
 **三、默认导出会变。** 0.84.0 把脚手架提升为默认导出并删掉了旧的会话仓库（`CHANGELOG.md:41-42`）。依赖 pi-agent-core 而不是内嵌源码的衍生方，升级时会直接碰到这个破坏性变更。
 
@@ -558,7 +558,7 @@ async function advance(store: Store, batchId: string, s: CallState, tools: Reado
 
 - pi 的 CLI 跑在 v1（L1/L2 + `coding-agent/src/core/`）上。v2（`packages/agent/src/harness/`，10065 行）是默认导出，但 `AgentHarness` 的 22 个动作方法全部抛 `HarnessNotImplemented`，打开已有会话也会被拒绝；产品代码中唯一的引用是一个未被调用的工厂。
 - v2 不是没写完，而是在 2026-08-04（`44289550a`，−9181 行）把一个能工作的实现拆掉，按「可持久化执行」的新规格重来。`minimax-code` 内嵌的正是拆除前的 v0.79.1 版本。
-- 压缩、截断、工具、会话四处 v1/v2 并行。v2 冻结之后 v1 的压缩又有 10 次提交、新增了两处护栏——不是 v2 丢了，是 v1 后来长出来的。并行的代价是同一修复要做两次，`step-harness` 已经在实际支付。
+- 压缩、截断、工具、会话四处 v1/v2 并行。v2 冻结之后 v1 的压缩又有 10 次提交、新增了两处护栏——不是 v2 丢了，是 v1 后来长出来的。并行的代价是同一修复要做两次，`Step-Code` 的压缩改动已经在 v1 和 v2 各放了一份。
 - v2 恢复语义的核心是三类状态的区分：普通失败（写进 transcript）、合法前缀（崩溃，推进完）、协议不可能产生的状态（损坏，拒绝）。恢复只追加、只用正常执行的转移，因此幂等；损坏有 12 种机器可读的原因。
 - 唯一的不确定区间是「意图已落盘、结算缺失」。pi 规格让工具声明决定（落盘与当前都是 `safe` 才重放，默认 `never`）；`deepseek-harness` 不自动重放，把「结果未知」和重试指引写给模型。
 - pi 自己在坏数据上有三种立场：v1 静默跳过任意坏行，v2 JSONL 只截掉未确认的尾行，v2 reducer 拒绝一切矛盾。规格（寄存器、无 reducer）与代码（记录日志 + reducer）目前不一致，不变量相同。

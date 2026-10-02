@@ -29,7 +29,6 @@
 | [deepseek-harness](./deepseek-harness/) | DeepSeek | **无功能依赖**（对照组） | ⬜ 待开始 |
 | [ZCode](./zcode/) | 智谱 Z.ai | **零接触**（对照组） | ⬜ 待开始 |
 
-`step-harness`（阶跃内部版，pi 整树硬拷贝）的拆解已在研究工作区完成，将与 `Step-Code` 一并发布。
 
 ## 每份拆解稿的固定结构
 

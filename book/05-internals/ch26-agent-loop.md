@@ -394,11 +394,10 @@ sequenceDiagram
 
 ## 26.6 各家衍生方动了 L1 吗
 
-用 `diff` 直接比对三家衍生仓库里的 `agent-loop.ts`，结论很清楚：
+用 `diff` 直接比对两个带了内核的衍生仓库里的 `agent-loop.ts`（kimi-code 只拿了 TUI，没有 L1），结论很清楚：
 
 | 仓库 | L1 文件 | 与 pi 基准的差异 |
 | --- | --- | --- |
-| `step-harness` | `packages/agent/src/agent-loop.ts` | **逐字节相同**（794 行）【代码事实】 |
 | `Step-Code` | `packages/agent-core/src/agent-loop.ts` | 833 行。除包名替换外，**只加了一处**：工具调用泄漏重采样 |
 | `minimax-code` | `third_party/pi-mono/packages/agent/src/agent-loop.ts` | 877 行。vendor 的是更早的 **v0.79.1**（`MINIMAX_CHANGES.md:7-9`），尚无 `prepareNextTurn` |
 
@@ -450,4 +449,4 @@ for (let attempt = 0; attempt < leakRetryLimit && isToolCallMarkupLeak(message);
 - L2 `agent.ts` 用快照隔离 L1 的副作用，用闭包封装队列，用 `handleRunFailure` 让异常与正常结束同构。
 - L3 `agent-session.ts` 通过赋值钩子把扩展、压缩、模型刷新挂进来，`prepareNextTurn` 链式组合。
 - `runLoop` 只有三个出口，没有任何内建停止策略——这是第 18 章的前提。
-- 三家衍生方里，step-harness 原样保留 L1，Step-Code 只加了一处有界重采样，MiniMax 停在更早的版本上。
+- 两个带了 L1 的衍生方都没有重写它：Step-Code 只加了一处有界重采样，MiniMax 停在更早的 v0.79.1 上、加的是给宿主用的钩子。

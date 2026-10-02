@@ -8,7 +8,7 @@
 
 被分析的各上游仓库版权归其各自作者所有，引用遵循其各自许可：
 pi (github.com/earendil-works/pi-mono) 为 MIT，Copyright (c) 2025 Mario Zechner；
-Step-Code / step-harness / minimax-code / kimi-code / deepseek-harness 为 MIT；
+Step-Code / minimax-code / kimi-code / deepseek-harness 为 MIT；
 ZCode 为 Apache-2.0。版本与 commit 见 research/BASELINE.md。
 
 =======================================================================

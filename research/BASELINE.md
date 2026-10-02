@@ -27,7 +27,6 @@ pi 的提交节奏是**每月 400–530 次**，约每天 15 次。一个今天�
 | --- | --- | --- | --- | --- | --- |
 | **`pi`** | earendil-works | `b79e4cc834970cca69daebffab7df1da7d1e52c4` | 2026-08-28 | 0.84.4 | MIT |
 | `Step-Code` | 阶跃星辰（公开） | `7dd66cb9f11a40ba19285b620084b362892cadea` | 2026-09-24 | 0.1.0 | MIT |
-| `step-harness` | 阶跃星辰（内部） | `fe153835966a0713815dac5f888a9db6ba91682b` | 2026-09-11 | 0.3.1 | MIT |
 | `minimax-code` | MiniMax | `89c930a2dfb52ccebf937c2a0248512c1051be50` | 2026-09-21 | 0.5.0 | MIT |
 | `kimi-code` | 月之暗面 | `65ae3e368c7cfa096242cacc12eeeb661e682977` | 2026-09-20 | 2.0.2 | MIT |
 | `deepseek-harness`（对照组） | DeepSeek | `21638c56315ae6a2b552d6091945d3144c9af32e` | 2026-09-27 | 0.1.7-rc.2 | MIT |
@@ -53,8 +52,7 @@ git -C pi checkout b79e4cc834970cca69daebffab7df1da7d1e52c4
 ```
 A. 代码衍生（分析时须先与 pi 做 diff）
 pi (earendil-works, MIT, v0.84.4)
-├── step-harness    ── 硬拷贝整棵树（包名仍为 @earendil-works/pi-*）  [阶跃·内部]
-│   └── Step-Code   ── 重构后的公开版本（重命名为 @step-harness/*）    [阶跃·公开]
+├── Step-Code       ── 重构式衍生（包重命名为 @step-harness/*）       [阶跃·开源]
 ├── minimax-code    ── vendor 完整 pi 栈（third_party/pi-mono）
 └── kimi-code       ── 仅 vendor TUI（@moonshot-ai/pi-tui）
 
@@ -70,7 +68,6 @@ ZCode              ── 零接触
 
 | 仓库 | derivation 程度 | 署名是否保留 |
 | --- | --- | --- |
-| `step-harness` | 整树硬拷贝 | 保留（原样未改包名，属被动保留） |
 | `Step-Code` | 重构式衍生 | ✅ `LICENSE-STATUS.md` 显式声明 |
 | `minimax-code` | 整栈 vendor | ✅ `docs/architecture.md` + `LICENSE-STATUS.md` |
 | `kimi-code` | 仅 TUI | ✅ `packages/pi-tui/LICENSE` 保留原作者署名 |

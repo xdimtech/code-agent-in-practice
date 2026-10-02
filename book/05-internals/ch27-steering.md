@@ -283,7 +283,6 @@ if (steeringIndex !== -1) {
 
 | 仓库 | 是否区分两类插话 | 实现 | 与 pi 的差异 |
 | --- | --- | --- | --- |
-| `step-harness` | 是 | L2 `agent.ts` 与 pi 逐字节相同 | 无 |
 | `Step-Code` | 是 | L2 `agent-core/src/agent.ts` 592 行，除包名外与 pi 相同 | 无 |
 | `minimax-code` | 是 | 内嵌 pi v0.79.1：`third_party/pi-mono/packages/agent/src/agent.ts`（579 行），`steeringQueue` / `followUpQueue` 原样保留 | 无 |
 | `kimi-code`（仅 TUI 衍生） | 是 | `editor-keyboard.ts:51` `steerMessage` | bash `!` 命令与技能激活不可 steer，留在队列里（`:327-334`） |
