@@ -1,0 +1,17 @@
+{
+  "name": "ch07-hello-pi",
+  "private": true,
+  "type": "module",
+  "description": "第 7 章配套：30 分钟跑通 pi —— 脚本 provider 扩展、时间线解析、环境体检、会话文件",
+  "scripts": {
+    "start": "node --experimental-strip-types src/main.ts",
+    "explain": "node --experimental-strip-types src/main.ts explain --counts",
+    "doctor": "node --experimental-strip-types src/main.ts doctor",
+    "script": "node --experimental-strip-types src/main.ts script",
+    "run": "node --experimental-strip-types src/main.ts run",
+    "test": "node --experimental-strip-types --test src/*.test.ts extension/*.test.ts"
+  },
+  "engines": {
+    "node": ">=22.6"
+  }
+}
