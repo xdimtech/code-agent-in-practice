@@ -533,7 +533,7 @@ flowchart TD
 
 Step-Code 是阶跃星辰基于 pi 重构的开源版本。看它怎么处理扩展，能看出「零隔离」在真实产品里的去留。
 
-【代码事实】扩展加载器基本原样保留：`packages/coding-agent/src/core/extensions/loader.ts` 与 pi 相比，只改了包作用域别名（新增 `@step-harness/*`，旧的 `@earendil-works/*` 作为兼容键保留）、去掉了计时埋点、多了一个批量 `registerTools`，并在 `discoverAndLoadExtensions` 加了一个 `configDirName` 参数，用来换配置目录名。扩展照旧在宿主进程里由 jiti 加载。扩展包安装参数也一样不带 `--ignore-scripts`（`core/package-manager.ts:1770-1791`）。
+【代码事实】扩展加载器基本原样保留：`packages/coding-agent/src/core/extensions/loader.ts` 与 pi 相比，只改了包作用域别名（新增自家 scope，旧的 `@earendil-works/*` 作为兼容键保留）、去掉了计时埋点、多了一个批量 `registerTools`，并在 `discoverAndLoadExtensions` 加了一个 `configDirName` 参数，用来换配置目录名。扩展照旧在宿主进程里由 jiti 加载。扩展包安装参数也一样不带 `--ignore-scripts`（`core/package-manager.ts:1770-1791`）。
 
 但 Step-Code 加了一种 pi 没有的代码：**workflow 脚本**——由模型在运行时编写、用来编排多个子 agent 的 JavaScript。这种代码它放进了沙箱。文件头的注释把选型的来龙去脉写得很完整：
 

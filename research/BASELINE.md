@@ -52,7 +52,7 @@ git -C pi checkout b79e4cc834970cca69daebffab7df1da7d1e52c4
 ```
 A. 代码衍生（分析时须先与 pi 做 diff）
 pi (earendil-works, MIT, v0.84.4)
-├── Step-Code       ── 重构式衍生（包重命名为 @step-harness/*）       [阶跃·开源]
+├── Step-Code       ── 重构式衍生（包重命名为自家 scope）       [阶跃·开源]
 ├── minimax-code    ── vendor 完整 pi 栈（third_party/pi-mono）
 └── kimi-code       ── 仅 vendor TUI（@moonshot-ai/pi-tui）
 

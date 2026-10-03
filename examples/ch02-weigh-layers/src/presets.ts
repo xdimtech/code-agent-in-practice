@@ -16,7 +16,7 @@ export const PI_LAYERS: readonly Layer[] = [
   { name: "CLI 外壳（apps/cli）", prefixes: ["apps/cli/"] },
 ];
 
-/** Step-Code `7dd66cb`：7 个 @step-harness/* 包 + apps/cli */
+/** Step-Code `7dd66cb`：7 个改用自家 scope 的包 + apps/cli */
 export const STEP_CODE_LAYERS: readonly Layer[] = [
   { name: "内核 L1（agent-loop.ts）", prefixes: ["packages/agent-core/src/agent-loop.ts"] },
   { name: "v2 harness（未接线）", prefixes: ["packages/agent-core/src/harness/"] },

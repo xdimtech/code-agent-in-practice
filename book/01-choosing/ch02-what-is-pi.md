@@ -236,13 +236,13 @@ README 说 "without having to fork"。但本书研究的三个下游，**全部*
 
 | 下游 | 拿走了什么 | 内核循环 | provider 层 | 产品层 |
 | --- | --- | --- | --- | --- |
-| **Step-Code** | 重组为 7 个 `@step-harness/*` 包 + `apps/cli` | 833 行（+39，见下） | 23,668 → **12,178**，内置模型目录清空 | 60,960 → 79,475，另拆出 23,045 行的 `apps/cli` |
+| **Step-Code** | 重组为 7 个改用自家 scope 的包 + `apps/cli` | 833 行（+39，见下） | 23,668 → **12,178**，内置模型目录清空 | 60,960 → 79,475，另拆出 23,045 行的 `apps/cli` |
 | **minimax-code** | 4 个包（agent / ai / coding-agent / tui），v0.79.1，放在 `third_party/pi-mono/` | 在 v0.79.1 上加了几个钩子（742 → 877 行） | 在 vendor 的源码上打补丁 | 自写 26 个 workspace 包叠在上面 |
 | **kimi-code** | 只拿 `tui` | 不用，自研内核 | 不用 | 不用 |
 
 ### 证据一：内核没人重写
 
-【代码事实】Step-Code 的 `packages/agent-core/src/agent.ts` 与 pi 基准只差一行 import（`@earendil-works/pi-ai` 换成 `@step-harness/providers`，`:9`）；`agent-loop.ts` 多了 39 行，下面细看。minimax-code 停在 v0.79.1，它的 `agent-loop.ts` 比同版本上游多出 135 行（742 → 877），补丁台账 `third_party/pi-mono/MINIMAX_CHANGES.md` 里落在 `packages/agent` 的几条，做的都是**给宿主开口子**：工具钩子返回 `terminateAgent` 让整个 agent 停下（`:91-97`）、工具真正开始执行时回调 `onToolExecutionStart`（`:99-105`）、steering 之后再查一次 `shouldStopAfterSteering`（`:83-89`）。没有一条改的是循环本身的决策。
+【代码事实】Step-Code 的 `packages/agent-core/src/agent.ts` 与 pi 基准只差一行 import（`@earendil-works/pi-ai` 换成自家 scope 下的 `providers` 包，`:9`）；`agent-loop.ts` 多了 39 行，下面细看。minimax-code 停在 v0.79.1，它的 `agent-loop.ts` 比同版本上游多出 135 行（742 → 877），补丁台账 `third_party/pi-mono/MINIMAX_CHANGES.md` 里落在 `packages/agent` 的几条，做的都是**给宿主开口子**：工具钩子返回 `terminateAgent` 让整个 agent 停下（`:91-97`）、工具真正开始执行时回调 `onToolExecutionStart`（`:99-105`）、steering 之后再查一次 `shouldStopAfterSteering`（`:83-89`）。没有一条改的是循环本身的决策。
 
 Step-Code 对循环的改动只有 +39 行，针对的是一个**服务端**的故障：
 
@@ -263,7 +263,7 @@ const DEFAULT_TOOL_CALL_LEAK_RETRIES = 2;
 const TOOL_CALL_MARKUP_RE = /<tool_call>|<function=/u;
 ```
 
-当推理服务的工具调用解析器失败，模型想调的工具会以 `<tool_call>` 原文的形式漏进普通文本里；这一轮没有可执行的调用，循环会以为模型说完了。Step-Code 的处理是丢掉这一轮、用同一份上下文重新采样，最多两次。【推断】这是一个只有「自己部署推理服务」的厂商才会遇到的问题，而且它必须改在循环里——这是循环唯一能看到「本轮有没有工具调用」的位置。这个文件与 pi 的 diff 一共三处：上面这段循环（连同把 `const message` 改成 `let`）、文件末尾的两个辅助定义，以及把 `@earendil-works/pi-ai` 换成 `@step-harness/providers` 的 import（`:12`）。
+当推理服务的工具调用解析器失败，模型想调的工具会以 `<tool_call>` 原文的形式漏进普通文本里；这一轮没有可执行的调用，循环会以为模型说完了。Step-Code 的处理是丢掉这一轮、用同一份上下文重新采样，最多两次。【推断】这是一个只有「自己部署推理服务」的厂商才会遇到的问题，而且它必须改在循环里——这是循环唯一能看到「本轮有没有工具调用」的位置。这个文件与 pi 的 diff 一共三处：上面这段循环（连同把 `const message` 改成 `let`）、文件末尾的两个辅助定义，以及把 `@earendil-works/pi-ai` 换成自家 scope 下 `providers` 包的 import（`:12`）。
 
 ### 证据二：叶子包可以被单独拿走
 
