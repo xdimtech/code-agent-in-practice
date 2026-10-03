@@ -1,0 +1,13 @@
+{
+  "name": "ch09-api-lookup",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 9 章：扩展 API 反查——我想做 X 用哪个事件或 API；36 个事件的卡片；照 pi runner 写的 12 种合并方式模拟器；记录事件顺序的扩展和检查器（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/catalog.test.ts src/merge.test.ts src/order.test.ts src/record.test.ts extension/trace.test.ts src/main.test.ts"
+  }
+}

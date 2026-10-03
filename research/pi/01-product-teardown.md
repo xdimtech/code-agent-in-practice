@@ -319,7 +319,7 @@ CI 里有配套实现：`.github/workflows/issue-gate.yml` 与 `pr-gate.yml`，�
 | AGENTS.md / CLAUDE.md | ✅ | 祖先在前，兼容 CLAUDE.md | [4.1](./04-context-engineering.md) |
 | Skills | ✅ | 两段式注入（清单 → 全文） | [4.5](./04-context-engineering.md) |
 | 工具 | ✅ | 8 个内置，**默认只开 4 个** | [5.1](./05-tools-permissions.md) |
-| 扩展系统 | ✅ | TS 模块，45 个事件，同进程 | [7.1](./07-extensibility.md) |
+| 扩展系统 | ✅ | TS 模块，36 个事件，同进程 | [7.1](./07-extensibility.md) |
 | Provider 可注册 | ✅ | 运行时注册，四种粒度 | [7.5](./07-extensibility.md) |
 | 包分发 | ✅ | npm / git / 本地，四类资源 | [7.4](./07-extensibility.md) |
 | 主题 | ✅ | 可通过包分发 | — |

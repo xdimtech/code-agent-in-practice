@@ -45,6 +45,39 @@
 
 **判定：这不是"插件系统"，是"把整条主循环的每个接缝都开放出来"。** 一个扩展能改写系统提示、改写请求体、改写工具结果、注册自己的 provider、替换全部内置工具——基本上没有它做不到的事。
 
+### 7.2.1 反查视角：合并方式比事件名更重要
+
+（第 9 章的素材；配套代码 `examples/ch09-api-lookup/`。）
+
+**36 个事件里 15 个能改变点什么，21 个只读。** 能改的 15 个分属 11 种合并方式，加上只读的 notify 一共 12 种，每种对应 `runner.ts` 的一个方法：
+
+| 合并 | 事件 | runner.ts | 要点 |
+| --- | --- | --- | --- |
+| notify | 21 个只读事件 | `:851-883` | 返回值忽略，每个处理函数单独 try/catch |
+| cancel | `session_before_switch/fork/compact/tree` | `:863-867` | 第一个 `cancel: true` 短路，否则最后一个非空结果胜出 |
+| first-decided | `project_trust` | `:204-234` | 第一个不是 undecided 的胜出；返回 undefined 在读 `.trusted` 时抛 TypeError（`:218-219`） |
+| collect | `resources_discover` | `:1197-1243` | 三类路径全部收集 |
+| chain | `context`、`before_provider_request` | `:1034-1064`、`:1066-1098` | 前一个的输出是后一个的输入；抛错的那一份丢失 |
+| in-place | `before_provider_headers` | `:1100-1129` | 返回值忽略，只认就地修改 |
+| prompt | `before_agent_start` | `:1131-1195` | message 累加，systemPrompt 串联 |
+| same-role | `message_end` | `:885-925` | 串联；换了 role 的结果被拒 |
+| per-field | `tool_result` | `:927-980` | content / details / isError / usage 逐字段串联 |
+| block | `tool_call` | `:982-1003` | 第一个 block 短路；**没有 try/catch** |
+| first-result | `user_bash` | `:1005-1032` | 第一个非空结果胜出 |
+| transform | `input` | `:1246-1285` | transform 串联，handled 短路 |
+
+**抛错的下场因事件而异。** `tool_call` 抛错 → `agent-session.ts:494-506` 重抛 → `agent-loop.ts:659-664` 变成错误结果，等于拦下（fail-closed）。其余事件都被 runner 接住记成扩展错误：`before_provider_request` 抛错时这一份改写丢失、请求照发；`user_bash` 抛错时命令回到本机执行。
+
+**生命周期图和代码有一处不一致。** `docs/extensions.md:275-349` 把用户消息的 `message_start / message_end` 画在 `agent_start` 和 `turn_start` 之间；代码是 `agent_start` → `turn_start` → 用户消息（`agent/src/agent-loop.ts:110-115`）。工具调用的顺序是 `tool_execution_start` → `tool_call` → `tool_execution_update` → `tool_result` → `tool_execution_end`（`agent-loop.ts:443-470`、`:498-530`），所以被拦下的调用也有 start / end，只是没有 `tool_result`。请求阶段 `context` 总在最前（`agent-loop.ts:286-290`），另外三个只在有订阅时才走（`core/sdk.ts:330-366`）。
+
+**三个「什么时候能用」的坑。**
+
+- 旗标：命令行的值在所有扩展加载完之后才写进去（`agent-session-services.ts:93-113`，调用在 `:183`），工厂函数里 `getFlag` 只拿得到默认值（`loader.ts:329-335`、`:355-359`）。
+- `sendUserMessage`：正在运行时不给 `deliverAs` 会在 `prompt` 里抛错（`agent-session.ts:1211-1215`），但 `bindCore` 把异步错误转成 `emitError`（`:2577-2584`），调用处看不到。
+- 状态：从 `getBranch()` 重建要同时订阅 `session_start` 和 `session_tree`（`examples/extensions/todo.ts:114-133`），`/tree` 跳分支不会再发 `session_start`。
+
+**下游对照。** Step-Code（`7dd66cb`，同为 v0.84.4、同样 36 个事件）把产品功能都做成隐藏的内置扩展（`apps/cli/src/bootstrap/extensions.ts:41-55`），10 个文件里 36 处订阅、用到 14 个事件：权限和计划模式走 `tool_call`（`features/step.ts:242`、`features/step-plan.ts:178-193`），请求归因走就地改的 `before_provider_headers`（`features/step.ts:264`），状态恢复走 `session_start + session_tree`（`step-plan.ts:250-253`、`step-tasks.ts:506-507`），计划模式的旗标在 `session_start` 里读（`step-plan.ts:251`）。minimax-code（`89c930a`）vendored 的 pi v0.79.1 只有 30 个事件（`third_party/pi-mono/packages/coding-agent/src/core/extensions/types.ts:1126-1164`），产品代码不用它，而是在 `packages/agent-runtime/src/types.ts:162-172` 自己定了 9 个钩子、`:263-304` 一个只有 6 个成员的 `ExtensionAPI`，由 `registry.ts:126-138` 映射到 agent-core 的 turn hooks；`before_tool_call` 第一个 block 短路、`after_tool_call` 的补丁逐个合并（`packages/agent-core/src/pi-turn-runner/tools.ts:78-116`）。
+
 ---
 
 ## 7.3 隔离：同进程，零隔离
