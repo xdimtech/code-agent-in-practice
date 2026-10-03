@@ -1,0 +1,13 @@
+{
+  "name": "ch10-first-tool",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 10 章：写第一个工具——照 pi agent-loop 写的工具宿主（准备、校验、拦截、执行、合并、批次）、照 core/tools/truncate.ts 写的截断、照 sdk/agent-session 写的激活规则，和一个不起 shell 的 find_text 工具（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/validate.test.ts src/truncate.test.ts src/host.test.ts src/activation.test.ts src/find-text.test.ts extension/find-text.test.ts src/main.test.ts"
+  }
+}

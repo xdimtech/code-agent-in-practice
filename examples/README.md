@@ -24,6 +24,7 @@ examples/ch10-first-tool/
 | [`ch04-capability-audit/`](./ch04-capability-audit/) | 第 4 章 | 按能力清单把仓库归进五种状态，附 `file:line` 证据，与 fork 逐项对照，零依赖 |
 | [`ch08-extension-host/`](./ch08-extension-host/) | 第 8 章 | 按 pi 心智模型写的扩展宿主：工厂函数、注册即提交、失败回滚、通知容错、拦截 fail-closed、保留键，零依赖 |
 | [`ch09-api-lookup/`](./ch09-api-lookup/) | 第 9 章 | 扩展 API 反查：按任务找事件或 API、36 个事件的卡片、照 pi runner 写的 12 种合并方式模拟器、记录事件顺序的扩展与顺序检查器，零依赖 |
+| [`ch10-first-tool/`](./ch10-first-tool/) | 第 10 章 | 写第一个工具：照 pi agent-loop 写的工具宿主（准备、校验、拦截、执行、合并、并行/串行批次）、两条上限的截断、激活与系统提示词规则，和一个不起 shell 的 find_text 工具与 pi 扩展，零依赖 |
 | [`ch11-custom-provider/`](./ch11-custom-provider/) | 第 11 章 | provider 注册表与 OpenAI 兼容流式适配器：四层合成、校验与回退、compat 猜测、流式拼装、钩子契约检查，零依赖 |
 | [`ch12-context/`](./ch12-context/) | 第 12 章 | system prompt 与上下文注入：AGENTS.md 发现、Skills 两段式注入与信任门、扩展注入链、前缀缓存模拟，零依赖 |
 | [`ch13-package-gate/`](./ch13-package-gate/) | 第 13 章 | 打包与分发：清单与约定目录、过滤四步、五级优先级、包去重、装前检查、`--ignore-scripts` 加白名单的安装闸门，零依赖 |
