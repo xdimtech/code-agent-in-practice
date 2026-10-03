@@ -1,0 +1,15 @@
+{
+  "name": "ch01-anatomy",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 1 章：Code Agent 是什么——裸循环与套上 harness 的对照、这次进上下文的消息都发 message_end、五种停下来时的样子、按层给源码树称重并判断换掉一层的代价（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": {
+    "node": ">=22.6"
+  },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/loop.test.ts src/harness.test.ts src/layers.test.ts src/tools.test.ts"
+  }
+}

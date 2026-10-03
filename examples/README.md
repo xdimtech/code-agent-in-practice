@@ -19,6 +19,7 @@ examples/ch10-first-tool/
 
 | 目录 | 对应章节 | 内容 |
 | --- | --- | --- |
+| [`ch01-anatomy/`](./ch01-anatomy/) | 第 1 章 | 拆开「Code Agent」：221 行裸循环与 248 行 harness 的对照、这次进上下文的消息都发 message_end、五种停下来时的样子（外加「截断不是出口」的对照）、可反驳的四层分类规则与换掉一层的代价，零依赖 |
 | [`ch02-weigh-layers/`](./ch02-weigh-layers/) | 第 2 章 | 按层称一个仓库的源码重量，与 fork 逐层对照，零依赖 |
 | [`ch03-modes/`](./ch03-modes/) | 第 3 章 | 四种形态选哪种：照抄 pi 的形态判定、五种形态的契约与换形态代价、严格 JSONL 分帧与 U+2028、真起假 RPC 子进程看对话框挂住、检查 json / rpc 录下的输出，零依赖 |
 | [`ch04-capability-audit/`](./ch04-capability-audit/) | 第 4 章 | 按能力清单把仓库归进五种状态，附 `file:line` 证据，与 fork 逐项对照，零依赖 |
