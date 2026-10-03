@@ -1,0 +1,14 @@
+{
+  "name": "ch05-route-filter",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 5 章：四条路线的事实表 + 硬约束过滤器——不打分、不排名，只排除和列义务，每条都带出处（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "verify": "node --experimental-strip-types --no-warnings src/main.ts verify",
+    "test": "node --experimental-strip-types --no-warnings --test test/evidence.test.ts test/routes.test.ts test/filter.test.ts test/verify.test.ts test/main.test.ts"
+  }
+}
