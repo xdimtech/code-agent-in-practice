@@ -56,6 +56,7 @@ features:
 | 它要执行 `rm -rf` 了，怎么拦 | [第 16 章 权限与确认](/book/03-policy-layer/ch16-permissions) |
 | 它自己转起圈来了，怎么停 | [第 18 章 防死循环](/book/03-policy-layer/ch18-loop-guards) |
 | 上线前还差什么 | [第 22 章 上线前必补清单](/book/04-shipping/ch22-preflight) |
+| 改了提示词或工具，怎么知道没改坏 | [第 23 章 evals：怎么知道它做对了](/book/04-shipping/ch23-evals) |
 | 主循环到底怎么转的 | [第 26 章 Agent Loop 三层切分](/book/05-internals/ch26-agent-loop) |
 | 别人家是怎么做的 | [第六部分 厂商全景](/book/06-vendors/ch31-step) |
 

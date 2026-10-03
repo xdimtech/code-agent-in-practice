@@ -1,0 +1,14 @@
+{
+  "name": "ch23-evals",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 23 章：给 agent 建一套回归——脚本化的假模型、真跑的工具、成对对比、产物遮敏落盘（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/run.ts run",
+    "compare": "node --experimental-strip-types --no-warnings src/run.ts compare --out .eval --gate",
+    "test": "node --experimental-strip-types --no-warnings --test test/root.test.ts test/trace.test.ts test/assertions.test.ts test/recorder.test.ts test/workspace.test.ts test/harness.test.ts test/score.test.ts test/cases.test.ts test/run.test.ts"
+  }
+}
