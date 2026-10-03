@@ -1,0 +1,13 @@
+{
+  "name": "ch22-preflight",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 22 章：上线前必补清单——刹车、两条路的确认、凭据白名单、装扩展不跑安装脚本，外加未接住拒绝的崩溃收尾（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/loop-guard.test.ts src/env-filter.test.ts src/crash.test.ts src/install-scripts.test.ts src/settings.test.ts src/install-lab.test.ts src/checklist.test.ts src/main.test.ts extension/wiring.test.ts"
+  }
+}

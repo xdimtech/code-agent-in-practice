@@ -32,6 +32,7 @@ examples/ch10-first-tool/
 | [`ch13-package-gate/`](./ch13-package-gate/) | 第 13 章 | 打包与分发：清单与约定目录、过滤四步、五级优先级、包去重、装前检查、`--ignore-scripts` 加白名单的安装闸门，零依赖 |
 | [`ch14-session-reader/`](./ch14-session-reader/) | 第 14 章 | 调试与排障：读会话 JSONL（坏行、分支、压缩、花费）、按严重程度诊断、会话到请求的投影、provider 请求录制与回放、自检（doctor）、调试变量检查、分享前脱敏，零依赖 |
 | [`ch15-policy-layer/`](./ch15-policy-layer/) | 第 15 章 | 机制之上的最小策略层：两条执行路径的失败语义、命令三态分析（命中 / 看不全 / 普通）、写入路径规则、分层配置只许收紧、各闸门的覆盖面检查，零依赖 |
+| [`ch22-preflight/`](./ch22-preflight/) | 第 22 章 | 上线前必补清单：重复调用指纹与轮数上限的刹车、模型与 `!` 两条路的确认、按白名单给子进程环境（`spawnHook` 与 `operations` 两种接法）、临时目录里真跑 npm 看安装脚本跑没跑、没人接的拒绝在 Node 与 Bun 下的落点和兜底，零依赖 |
 | [`ch24-upgrade-triage/`](./ch24-upgrade-triage/) | 第 24 章 | 升级前的四个检查：CHANGELOG 区间里的破坏性变更、vendor 标记、补丁台账体检、基线 / 我们 / 上游新版三方分诊并与台账对账，零依赖 |
 | [`ch25-audit-log/`](./ch25-audit-log/) | 第 25 章 | 合规与审计边界：检查 pi 会话能证明什么、带哈希链（sha256 / HMAC）与外部锚点的只追加审计日志、停在第一处断裂的逐行校验、记下的参数与执行的参数对照、写不进去就拦下工具调用的 pi 扩展，零依赖 |
 | [`ch26-minimal-loop/`](./ch26-minimal-loop/) | 第 26 章 | 按 pi 三层切分写的最小 Agent 循环，零依赖 |

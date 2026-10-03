@@ -1,0 +1,3 @@
+{
+  "npmCommand": ["npm", "--ignore-scripts"]
+}
