@@ -20,6 +20,7 @@ examples/ch10-first-tool/
 | 目录 | 对应章节 | 内容 |
 | --- | --- | --- |
 | [`ch02-weigh-layers/`](./ch02-weigh-layers/) | 第 2 章 | 按层称一个仓库的源码重量，与 fork 逐层对照，零依赖 |
+| [`ch03-modes/`](./ch03-modes/) | 第 3 章 | 四种形态选哪种：照抄 pi 的形态判定、五种形态的契约与换形态代价、严格 JSONL 分帧与 U+2028、真起假 RPC 子进程看对话框挂住、检查 json / rpc 录下的输出，零依赖 |
 | [`ch04-capability-audit/`](./ch04-capability-audit/) | 第 4 章 | 按能力清单把仓库归进五种状态，附 `file:line` 证据，与 fork 逐项对照，零依赖 |
 | [`ch08-extension-host/`](./ch08-extension-host/) | 第 8 章 | 按 pi 心智模型写的扩展宿主：工厂函数、注册即提交、失败回滚、通知容错、拦截 fail-closed、保留键，零依赖 |
 | [`ch11-custom-provider/`](./ch11-custom-provider/) | 第 11 章 | provider 注册表与 OpenAI 兼容流式适配器：四层合成、校验与回退、compat 猜测、流式拼装、钩子契约检查，零依赖 |

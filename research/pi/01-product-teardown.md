@@ -137,6 +137,77 @@ RPC 模式有一条容易踩的契约（`README.md:489`）：
 
 **这是被真实 bug 教育过才会写进 README 的一句话**——`readline` 会在 U+2028/U+2029 处断行，而这些字符可以合法出现在 JSON 字符串里。
 
+### 1.4.1 形态怎样判定
+
+`main.ts:110-121` `resolveAppMode`：`--mode rpc` → rpc；`--mode json` → json；`-p`、stdin 不是 TTY、stdout 不是 TTY 三者任一成立 → print；其余 → interactive。【代码事实】
+
+`main.ts:868-875`：非 rpc 形态会把管道 stdin 读到 EOF（`readPipedStdin`，`:78-95`）；interactive 形态读到了管道内容就改成 print。rpc 跳过这一步，因为 stdin 是命令通道。【代码事实】
+
+其他分叉：`:633-637` 非交互形态接管 stdout（`core/output-guard.ts:45-70`，把别处的写入改道到 stderr）；`:639-642` rpc 拒绝 `@file` 参数；`:656` 首次设置只在 interactive；`:906-909` 非交互形态没有模型直接退 1；`:917-925` rpc 在后台刷新模型目录（15 秒超时）。【代码事实】
+
+### 1.4.2 print / json 的契约
+
+`modes/print-mode.ts`（169 行）：
+
+| 行 | 行为 |
+| --- | --- |
+| `:50-66` | SIGTERM 退 143，SIGHUP 退 129（Windows 只注册 SIGTERM） |
+| `:76-77` | `bindExtensions({ mode: "json" \| "print" })`，**不传 uiContext** → 扩展 `hasUI=false` |
+| `:108-118` | json 形态每个事件写一行 `JSON.stringify(toJsonEvent(event))`，并等 stdout 背压 |
+| `:122-127` | json 形态先写会话头（`type: "session"`） |
+| `:131-137` | 多条消息依次 `prompt` |
+| `:139-156` | **只有 text 形态**检查最后一条助手消息：`stopReason` 为 error / aborted 时写 stderr 并退 1；否则打印其中的文本 |
+| `:159-161` | 抛异常退 1 |
+
+推论：`--mode json` 一轮以 `stopReason: "error"` 结束时进程退 0，调用方只能从 `agent_end` 里读成败。【推断，依据 `:139-156` 只在 `mode === "text"` 分支里设 exitCode】
+
+`modes/json-event.ts:20-38` 去掉流式事件里的 `partial` 快照，并在 `toolcall_start` 上补 id / toolName。【代码事实】
+
+### 1.4.3 RPC 协议全貌
+
+| 部分 | 事实 | 出处 |
+| --- | --- | --- |
+| 命令 | 33 种，每种可带 `id`；响应带回同一 `id` | `modes/rpc/rpc-types.ts:20-74`；`docs/rpc.md:26` |
+| 三类输出 | 响应（`type: "response"`）、会话事件、`extension_ui_request`，共用一条 stdout | `docs/rpc.md:20-24`、`:1184-1191` |
+| 分帧 | 只按 `\n` 切，去掉行尾 `\r`；有意不用 readline | `modes/rpc/jsonl.ts:14-58`；`docs/rpc.md:28-37` |
+| prompt 的响应 | 异步：预检通过才发 success，否则发 error；处理函数本身返回 undefined | `modes/rpc/rpc-mode.ts:394-416` |
+| 解析失败 / 未知命令 | 回 `command: "parse"` 的错误 / `Unknown command` | `:752-766`、`:715-718` |
+| 生命周期 | stdin 结束 → shutdown；否则永不返回 | `:804-807`、`:819-820` |
+| UI 方法 | 9 种：对话框 select / confirm / input / editor；通知 notify / setStatus / setWidget / setTitle / set_editor_text | `rpc-types.ts:246-281`；`docs/rpc.md:1190-1191` |
+| 对话框超时 | 只有调用方给了 `timeout` 才设定时器（`:115-120`），否则一直等；`editor` 连 timeout 参数都不接 | `rpc-mode.ts:91-131`、`:254-271` |
+| 回答 | `value` / `confirmed` / `cancelled: true`；未知 id 静默丢弃 | `rpc-types.ts:288-291`；`rpc-mode.ts:768-782` |
+| 降级 | `custom()` 返回 undefined，`getEditorText()` 返回 ""，`setTheme` 失败，一批 setter 是空操作 | `docs/rpc.md:1195-1203` |
+| 扩展视角 | `mode: "rpc"`，`hasUI: true` | `rpc-mode.ts:317-321`；`docs/rpc.md:1205` |
+
+自带客户端 `modes/rpc/rpc-client.ts`（609 行）：严格分帧（`:128`）；`send` 用 `req_N` 编号、30 秒超时（`:548-597`）；`waitForIdle` 等 `agent_settled`，默认 60 秒（`:464-479`）；非 JSON 行静默忽略（`:532-534`）；全文没有 `extension_ui` 字样，即没有回答对话框的方法。【代码事实】
+
+分帧修复：commit `e3adaf1bd`（2026-03-07，"use strict JSONL framing fixes #1911"），`CHANGELOG.md:2614`、`:2627`。但仓库自带的 `examples/rpc-extension-ui.ts:19`、`:521` 仍用 `readline.createInterface` 读 agent 的 stdout。【代码事实】
+
+readline 是否在 U+2028 处断行取决于 Node 版本：同一段脚本在 v16 / v18 / v22.22.3 上得 1 行，在 v24.14.1 / v25.8.2 上得 3 行（本书实测）。pi 的 `engines` 是 `node >=22.19.0`（`package.json:103-105`），所以这个坑在用户升级 Node 时才出现。【代码事实 + 实测】
+
+### 1.4.4 SDK 的 API 面
+
+`core/sdk.ts`（410 行）：`createAgentSession(options)`（`:173`），默认工具 `read, bash, edit, write`（`:256-263`）。JSDoc 示例里的 `continueSession: true`（`:153-156`）不在选项类型里——文档漂移。【代码事实】
+
+扩展绑定：`AgentSession` 的 `_extensionMode` 默认 `"print"`（`core/agent-session.ts:365`）；`bindExtensions`（`:2438-2461`）设置 uiContext / mode 并发出 `session_start`；`runner.setUIContext` 没给 uiContext 时用 `noOpUIContext`（`core/extensions/runner.ts:436-438`、`:236-262`），`hasUI()` 即「不是 noOp」（`:492-494`）。所以 SDK 嵌入者不调 `bindExtensions` 时扩展看到 `mode=print`、`hasUI=false`。【代码事实】
+
+换会话：`docs/sdk.md:114-119`、`:161-167`——new / resume / fork 在 `AgentSessionRuntime` 上，换完要重新订阅、重新 `bindExtensions`；`examples/sdk/13-session-runtime.ts:40-50` 是示范。`docs/sdk.md:119` 说内置的 interactive、print、RPC 用的就是这一层。【代码事实】
+
+### 1.4.5 hasUI 怎样改变扩展行为
+
+| 形态 | `ctx.mode` | `ctx.hasUI` | 出处 |
+| --- | --- | --- | --- |
+| interactive | tui | true | `modes/interactive/interactive-mode.ts:1913`、`:2085`、`:2433` |
+| print / json | print / json | false | `modes/print-mode.ts:76-77` |
+| rpc | rpc | true | `modes/rpc/rpc-mode.ts:317-321` |
+| SDK（未绑定） | print | false | `core/agent-session.ts:365` |
+
+`examples/extensions/permission-gate.ts:20-23`：`!ctx.hasUI` 时直接拦下危险命令；有 UI 时 `:25` 弹 `select` 问人。同一个扩展在 print 下拦、在 rpc 下问。`examples/extensions/` 下 15 个文件读 `hasUI`。【代码事实】
+
+### 1.4.6 远程会话包（实验性）
+
+`packages/protocol`（"Transport-neutral CBOR protocol for remote pi sessions"）、`packages/client`、`packages/server`（"experimental server package for pi"），版本均为 0.84.4。不是第五种形态，是 RPC 之外另一条正在长出来的接入路线。【代码事实：各包 `package.json` 的 description】
+
 ---
 
 ## 1.5 Provider 生态：40 家，中国厂商占 4 成

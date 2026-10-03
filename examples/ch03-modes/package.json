@@ -1,0 +1,13 @@
+{
+  "name": "ch03-modes",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 3 章：四种形态选哪种——照抄 pi 的形态判定；每种形态对接入方的契约与换形态的代价；严格 JSONL 分帧与 U+2028 陷阱；真起一个假 RPC 子进程看对话框怎样把它挂住；检查 --mode json / rpc 录下的输出；按需求选形态（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test src/jsonl.test.ts src/protocol.test.ts src/host.test.ts src/check.test.ts src/modes.test.ts src/choose.test.ts src/client.test.ts src/main.test.ts"
+  }
+}
