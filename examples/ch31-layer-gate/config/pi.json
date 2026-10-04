@@ -1,0 +1,26 @@
+{
+  "layers": [
+    { "name": "telemetry", "paths": ["packages/telemetry/src/"], "packages": ["@earendil-works/pi-telemetry"], "mayImport": [] },
+    { "name": "tui", "paths": ["packages/tui/src/"], "packages": ["@earendil-works/pi-tui"], "mayImport": [] },
+    { "name": "protocol", "paths": ["packages/protocol/src/"], "packages": ["@earendil-works/pi-protocol"], "mayImport": [] },
+    { "name": "ai", "paths": ["packages/ai/src/"], "packages": ["@earendil-works/pi-ai"], "mayImport": ["telemetry"] },
+    { "name": "agent", "paths": ["packages/agent/src/"], "packages": ["@earendil-works/pi-agent-core"], "mayImport": ["ai", "telemetry"] },
+    { "name": "client", "paths": ["packages/client/src/"], "packages": ["@earendil-works/pi-client"], "mayImport": ["protocol"] },
+    { "name": "server", "paths": ["packages/server/src/"], "packages": ["@earendil-works/pi-server"], "mayImport": ["ai", "protocol"] },
+    {
+      "name": "coding-agent",
+      "paths": ["packages/coding-agent/src/"],
+      "packages": ["@earendil-works/pi-coding-agent"],
+      "mayImport": ["agent", "ai", "client", "protocol", "tui"]
+    },
+    {
+      "name": "session-backend",
+      "paths": ["packages/session-backends/sqlite-node/src/"],
+      "packages": ["@earendil-works/pi-session-backend-sqlite-node"],
+      "mayImport": ["agent", "ai"]
+    },
+    { "name": "evals", "paths": ["packages/evals/src/"], "packages": ["@earendil-works/pi-evals"], "mayImport": ["ai", "coding-agent"] }
+  ],
+  "internalScopes": ["@earendil-works/"],
+  "ignore": ["/node_modules/", "/dist/", ".test.ts"]
+}

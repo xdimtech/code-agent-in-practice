@@ -84,7 +84,7 @@
 第一条是可以机械判定的，后两条要人读。4.6 节的工具只检查第一条，然后在此基础上多分出两种状态：
 
 - **未接线**：代码里有实现，但没有调用点。它既不是「有」（用户用不到），也不是「没做」（契约已经定了，补的时候要按这个契约来）。
-- **声明过时**：代码里有实现，文档却还写着「不做」。这只在下游出现——fork 补上了能力，但没改 README。4.5 节会看到 Step-Code 有 5 项处在这个状态。
+- **声明过时**：代码里有实现，文档却还写着「不做」。这只在下游出现——fork 补上了能力，但没改 README。4.5 节会看到 Step-Code 有 6 项处在这个状态。
 
 ```mermaid
 flowchart TD
@@ -393,7 +393,7 @@ flowchart TB
 
 ### 下游怎么做的：Step-Code
 
-【代码事实】用 4.6 节的工具对照 pi 与 Step-Code，24 项里有 5 项状态不同，全部从「决定不做」变成了「声明过时」（下表路径都在 `packages/coding-agent/` 下）：
+【代码事实】用 4.6 节的工具对照 pi 与 Step-Code，24 项里有 6 项状态不同，全部从「决定不做」变成了「声明过时」（下表路径都在 `packages/coding-agent/` 下）：
 
 | 能力 | Step-Code 的实现 | README 里还写着 |
 | --- | --- | --- |
@@ -402,11 +402,12 @@ flowchart TB
 | 子 agent | `src/features/step-subagent.ts:542` 注册 `subagent` 工具 | `README.md:441` "No sub-agents." |
 | Plan mode | `src/features/plan-mode-tools.ts:25` `StepPlanModeController` | `README.md:445` "No plan mode." |
 | 任务清单 | `src/features/step-tasks.ts:297-413`：`task_create / task_update / task_get / task_list` 四个工具 | `README.md:447` "No built-in to-dos." |
+| 后台 bash | `src/step/tool-profile.ts:137-142`：模型可见的 `run_command` 带 `run_in_background`，`:1405-1409` 转给 `startBackgroundCommand`（`:1160`） | `README.md:449` "No background bash." |
 
 三点观察：
 
-1. 【代码事实】**补法完全走 pi 留的机制。** Step-Code 的权限系统挂在同一个 `tool_call` 事件上（`src/features/step.ts:242-244`：`pi.on("tool_call", …)` → `permissions.handleToolCall(event, ctx)`），没有改循环。它的 `ask` 预设在无界面时的取值是 `nonInteractiveApproval: "deny"`（`permissions.ts:38-45`），`handleToolCall` 里 `!context.hasUI` 的分支（`:535-545`）在默认取值下直接拦下，与 `permission-gate.ts` 的 `!ctx.hasUI` 分支是同一个决定。
-2. 【代码事实】**子 agent 守住了上游的工具契约。** `run_in_background` 等参数被定义成内部控制，注释写明它们「intentionally absent from the model-facing Pi schema」（`step-subagent.ts:236-237`）；模型能调用的仍是 pi 那套阻塞式的 single / parallel / chain，后台通道只留给嵌入式调用方（`:552-554`）。所以表里没有「后台 bash」——它仍是「决定不做」。
+1. 【代码事实】**补法几乎完全走 pi 留的机制。** Step-Code 的权限系统挂在同一个 `tool_call` 事件上（`src/features/step.ts:242-244`：`pi.on("tool_call", …)` → `permissions.handleToolCall(event, ctx)`），没有改循环。它的 `ask` 预设在无界面时的取值是 `nonInteractiveApproval: "deny"`（`permissions.ts:38-45`），`handleToolCall` 里 `!context.hasUI` 的分支（`:535-545`）在默认取值下直接拦下，与 `permission-gate.ts` 的 `!ctx.hasUI` 分支是同一个决定。
+2. 【代码事实】**后台有两条通道，只有一条对模型开放。** 子 agent 的 `run_in_background` 被定义成内部控制，注释写明它「intentionally absent from the model-facing Pi schema」（`step-subagent.ts:236-237`），后台通道只留给嵌入式调用方（`:552-554`）。shell 不一样：Step-Code 把 pi 的内置工具整套换成自己的工具面（`tool-profile.ts`），其中 `run_command` 的 `run_in_background` 是模型可以直接传的参数，命令脱离会话启动、日志落盘、会话退出时一并终止。这一项不是挂在扩展事件上的，而是 `main.ts` 新增的 `toolProfile` 选项（`src/main.ts:793-801`）：工具定义作为 `customTools` 注册，并在用户没指定 `--tools` 时关掉 pi 的内置工具（`:1228-1235`）。权限层也为它单开了一条规则：后台命令不套用户配置的命令前缀（`src/step/permissions.ts:345-348`）。
 3. 【代码事实】**沙箱仍然没有。** 它不只是没做，而是被显式拒绝：
 
 ```ts
@@ -420,12 +421,12 @@ if (options.sandbox?.enabled === true) {
   return;
 ```
 
-【推断】按本书的立场只看「谁选了什么、代价是什么」：Step-Code 选择把 pi 留给用户的五项策略产品化。代价有两个。一是**文档失真**：README 的 Philosophy 一节（`README.md:435-449`）原样继承自上游，现在描述的是另一个产品。读者照着 README 判断能力边界，会得出错误结论。二是**它恰好落在 `security.md:35` 警告的那个位置**——有了进程内的权限预设，却没有进程外的隔离。这不是错误，`SANDBOX_UNAVAILABLE` 说明它很清楚这一点；但它意味着「Ask 模式」在产品文档里必须被描述成确认流程，而不是安全边界。
+【推断】按本书的立场只看「谁选了什么、代价是什么」：Step-Code 选择把 pi 留给用户的六项策略产品化。代价有两个。一是**文档失真**：README 的 Philosophy 一节（`README.md:435-449`）原样继承自上游，现在描述的是另一个产品。读者照着 README 判断能力边界，会得出错误结论。二是**它恰好落在 `security.md:35` 警告的那个位置**——有了进程内的权限预设，却没有进程外的隔离。这不是错误，`SANDBOX_UNAVAILABLE` 说明它很清楚这一点；但它意味着「Ask 模式」在产品文档里必须被描述成确认流程，而不是安全边界。
 
 ### 判断依据
 
 - **能直接承诺的只有 11 项**，且都有实现位置可查。【代码事实】
-- **「决定不做」的 7 项是最安全的补齐对象**：有钩子、有示例、上游不会来抢。Step-Code 补了其中 5 项，全部通过扩展事件完成。【代码事实】
+- **「决定不做」的 7 项是最安全的补齐对象**：有钩子、有示例、上游不会来抢。Step-Code 补了其中 6 项：5 项通过扩展事件，后台 bash 通过替换整套工具面。【代码事实】
 - **补齐之后，记得改掉继承来的「不做」声明**——否则你的文档与代码相互矛盾，4.6 节的工具会把它标成「声明过时」。【推断】
 - **prompt injection 不在任何人的承诺范围内**，你的产品文档应当明说。【代码事实 + 推断】
 
@@ -502,12 +503,12 @@ MCP                       决定不做  → 声明过时  packages/coding-agent/
 子 agent                  决定不做  → 声明过时  packages/coding-agent/src/features/step-subagent.ts:542 ↔ packages/coding-agent/README.md:441
 Plan mode                 决定不做  → 声明过时  packages/coding-agent/src/features/plan-mode-tools.ts:26 ↔ packages/coding-agent/README.md:445
 内置 to-do                决定不做  → 声明过时  packages/coding-agent/src/features/step-tasks.ts:297 ↔ packages/coding-agent/README.md:447
-后台 bash                 决定不做  决定不做
+后台 bash                 决定不做  → 声明过时  packages/coding-agent/src/step/tool-profile.ts:1160 ↔ packages/coding-agent/README.md:449
 …
 
 pi：有 11 · 未接线 1 · 声明过时 0 · 决定不做 7 · 没做 5
-Step-Code：有 11 · 未接线 1 · 声明过时 5 · 决定不做 2 · 没做 5
-5 项状态不同
+Step-Code：有 11 · 未接线 1 · 声明过时 6 · 决定不做 1 · 没做 5
+6 项状态不同
 ```
 
 4.5 节那张 Step-Code 表就是从这份输出整理出来的。工具给的是探针第一次命中的那一行，比如权限确认落在 `permissions.ts:24`（类型定义的下一行），Plan mode 落在接口的第一个方法上；整理成表时，人再把它校到定义处。
@@ -516,10 +517,10 @@ Step-Code：有 11 · 未接线 1 · 声明过时 5 · 决定不做 2 · 没做 
 
 写这份清单时踩过的坑，都已经体现在代码里：
 
-1. **探针是线索，不是结论。** 「后台 bash」最初的探针是在全部源码里找 `background`，结果命中了子 agent 的 `run_in_background`，把它误判成「有后台 bash」。修正办法是把搜索范围收窄到工具实现目录（`pi-manifest.ts:72`）。**这正是输出里必须带 `file:line` 的原因**：结论错了，引用会立刻暴露它。
+1. **探针是线索，不是结论，而且两个方向都会错。** 「后台 bash」最初的探针是在全部源码里找 `background`，命中了子 agent 的 `run_in_background`——误报。于是把搜索范围收窄到 pi 放工具的目录 `core/tools/`，结果又漏了 Step-Code：它的 `run_command` 定义在 `step/tool-profile.ts`，工具报「决定不做」，本书初稿也照抄了这个结论。现在的探针先看工具目录，再按「启动后台命令」这个动作在整个产品源码里兜底（`pi-manifest.ts:68-79`）。**这正是输出里必须带 `file:line` 的原因**：误报时，引用会立刻暴露它；漏报没有引用可看，只能靠换一个角度再搜一次——这里是从 README 的「No background bash」反查模型实际看到的工具 schema。
 2. **最具体的探针写在前面。** `present` 按顺序试，第一个有命中的提供证据（`classify.ts:43-49`）。「子 agent」先找工具注册 `name: "subagent"`，找不到再退到宽泛的 `sub-?agent`；否则引用的可能是一行 re-export，而不是实现。
 3. **定义处不是调用点。** `startAiSpan[<(]` 也会命中 `export function startAiSpan<…>(` 这一行本身。工具在算调用点时，把与 `present` 命中同一行的结果剔除（`classify.ts:57-58`）。
-4. **找命令，不要找单词。** 「doctor」最初的探针就是 `doctor` 这个词，对照 Step-Code 时命中了 `src/step/mcp-environment.ts:2` 的一行注释 "shared by the MCP runtime and the plugin doctor"，把「没做」报成了「有」。现在的探针要求它是一个带引号或斜杠的命令名，或者一次 `registerCommand("doctor"` 调用（`pi-manifest.ts:85`）。
+4. **找命令，不要找单词。** 「doctor」最初的探针就是 `doctor` 这个词，对照 Step-Code 时命中了 `src/step/mcp-environment.ts:2` 的一行注释 "shared by the MCP runtime and the plugin doctor"，把「没做」报成了「有」。现在的探针要求它是一个带引号或斜杠的命令名，或者一次 `registerCommand("doctor"` 调用（`pi-manifest.ts:90`）。
 5. **工具会搜到自己。** 清单里写满了探针字符串。把本书仓库提交之后直接审计它，`pi-manifest.ts` 会让沙箱、MCP 等 9 项显示为「有」。被审计的仓库包含本工具时，工具会排除自己所在的目录（`main.ts` 的 `selfIn`）。
 
 `npm test` 跑 23 个用例，覆盖五种状态的判定、探针短路、定义处剔除、清单校验（用户给的 JSON 是外部输入，每个错误都带出错位置）、`git grep` 的退出码约定（1 = 没有命中，不是错误）和终端对齐。
@@ -535,4 +536,4 @@ Step-Code：有 11 · 未接线 1 · 声明过时 5 · 决定不做 2 · 没做 
 - **机制与策略的分界线是 `beforeToolCall`**：循环提供拦截点（`agent-loop.ts:615-644`），产品层转发给扩展（`agent-session.ts:487-507`），拦什么由你写（`permission-gate.ts` 34 行）。用户的 `!` 命令走另一条路径。
 - **沙箱的「不做」论证最充分**：进程内的部分沙箱会被误当成安全边界（`security.md:35`）；隔离要来自 OS 或容器。
 - **你能承诺的有三层**：11 项直接承诺；13 项补上才能承诺；prompt injection 谁都承诺不了。
-- **Step-Code 补了五项「决定不做」**，全部通过扩展事件完成，但继承来的 README 没改，五项都成了「声明过时」；后台通道不对模型开放，沙箱仍被显式拒绝（`stdio-host.ts:439-445`）。
+- **Step-Code 补了六项「决定不做」**：五项通过扩展事件，后台 bash 通过替换整套工具面；继承来的 README 没改，六项都成了「声明过时」。沙箱仍被显式拒绝（`stdio-host.ts:439-445`）。

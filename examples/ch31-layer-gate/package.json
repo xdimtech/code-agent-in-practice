@@ -1,0 +1,14 @@
+{
+  "name": "ch31-layer-gate",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 31 章：一道零依赖的分层闸门——白名单判定、认不出的内部目标失败关闭、带 --self-test，且自测本身也被测（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "self-test": "node --experimental-strip-types --no-warnings src/main.ts --self-test",
+    "test": "node --experimental-strip-types --no-warnings --test test/imports.test.ts test/config.test.ts test/classify.test.ts test/scan.test.ts test/self-test.test.ts test/main.test.ts"
+  }
+}

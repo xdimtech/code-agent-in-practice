@@ -14,7 +14,7 @@ pi 把 agent 循环切成了三层，职责边界很干净：
 
 L1 不知道会话树、不知道压缩、不知道扩展，只认回调。这个切分是 pi 最值钱的设计决定之一：**`agent-loop.ts` 794 行里没有一处产品逻辑**，所以下游厂商替换产品层时不必碰主循环。
 
-对比：step-cli 的 `agent-loop.ts` 是 2,141 行，L1/L3 没有分开。
+对比：Step-Code 原样沿用了这份 `agent-loop.ts`（833 行，只多一处工具调用标记泄漏的重采样，见 [Step-Code 第 3 章](../step-code/03-agent-loop.md)）——L1 足够干净，下游连主循环都不用改。
 
 ### L2 只是包装，不是引擎
 
@@ -259,17 +259,15 @@ entry 类型共九种（`:144-155`）：message / thinking_level_change / model_
 
 ### 对下游归因的意义
 
-step-cli 拆解中记为阶跃自研的三项机制，现已确认**均非 pi 上游设计**：
+以 pi 为基座的下游，要在中断语义和防死循环上做文章，只能从这三处下手。以 Step-Code（公开版）为例：
 
-| 机制 | step-cli 位置 | pi 是否有 |
-| --- | --- | :---: |
-| turn steering 两阶段认领（`drain()` 只暂借，写进 transcript 后回调 `onSteered` 才算认领） | `agent-loop.ts:869-908` | ❌ |
-| un-send 语义（本 turn 零持久化进展则整体回撤 transcript） | `agent-loop.ts:821-843` | ❌ |
-| 重复调用指纹带 workspace mutation revision | `agent-loop.ts:2078-2086` | ❌ |
+| 机制 | pi 的现状 | Step-Code |
+| --- | --- | --- |
+| `drain()` 的认领语义 | destructive-immediate：取出即清空（`agent.ts:141-154`） | 原样（`agent.ts` 两边都是 592 行，只有 import 不同） |
+| 中断后的 transcript | 合成一条 `stopReason: "aborted"` 的 assistant 消息（`agent.ts:511-527`） | 原样 |
+| 重复调用指纹 | 无 | 无；遥测契约里定义了 `tool_call_repeat` 事件，没有任何代码发出它 |
 
-pi 在这三处的对应实现分别是：destructive-immediate 的 `drain()`（`agent.ts:141-154`）、把中断合成为一条 `stopReason: "aborted"` 的 assistant 消息（`agent.ts:511-527`）、以及什么都没有。
-
-**这三项是阶跃在 pi 基座上真正加的东西**，且都指向同一类问题：pi 的中断语义偏"记录事实"，阶跃改成了"保护用户意图"。
+Step-Code 在循环里只改了一处：工具调用标记泄漏到文本时重采样（[Step-Code 第 3 章](../step-code/03-agent-loop.md)）。**中断语义和防死循环仍然是 pi 的**——这三处是下游在 pi 上做产品时最可能需要自己补、而扩展 API 又够不着的地方。
 
 ---
 

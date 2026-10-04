@@ -13,7 +13,7 @@
 | 没做 | 两样都没有 |
 
 ```bash
-npm i && npm start                                       # 审计本书仓库自己（不是 agent 产品，24 项全是「没做」）
+npm i && npm start                                       # 审计本书仓库自己（不是 agent 产品；别的章的示例会让少数几项命中）
 npm start -- /path/to/pi                                 # 按内置的 pi 清单审计 pi
 npm start -- /path/to/pi /path/to/fork                   # 两个仓库逐项对照
 npm start -- --manifest my.json /path/to/repo            # 换成自己的清单

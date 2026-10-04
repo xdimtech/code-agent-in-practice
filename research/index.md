@@ -23,7 +23,7 @@
 | 仓库 | 厂商 | 与 pi 的关系 | 状态 |
 | --- | --- | --- | --- |
 | [**pi**](./pi/) | earendil-works | **公共上游** | ✅ 完成（9 章） |
-| [Step-Code](./step-code/) | 阶跃星辰（公开） | 代码衍生 · 重构式 | ⬜ 待开始 |
+| [Step-Code](./step-code/) | 阶跃星辰（公开） | 代码衍生 · 重构式 | ✅ 完成（9 章） |
 | [minimax-code](./minimax-code/) | MiniMax | 代码衍生 · 整栈 vendor | ⬜ 待开始 |
 | [kimi-code](./kimi-code/) | 月之暗面 | 代码衍生 · 仅 TUI | ⬜ 待开始 |
 | [deepseek-harness](./deepseek-harness/) | DeepSeek | **无功能依赖**（对照组） | ⬜ 待开始 |

@@ -48,7 +48,7 @@ L4  evals     → ai + coding-agent   (devDependencies，private: true)
 2. 根 `tsconfig.json:9-35` 的 `paths` 映射——但它把**所有**包映射给了所有代码，**反而不构成隔离**，只是让 IDE 能跳转；
 3. 人工 + `AGENTS.md` 约定。
 
-> 对比：Step-Code 有 16 道架构 lint 闸门（`check-public-boundary`、`check-layer-direction` 等），step-cli 有 13 条 depcruise 规则。**这是下游厂商在 pi 基座上明确补强的方向**，不是他们抄来的。
+> 对比：Step-Code 有 18 个 `check-*.mjs`，其中 14 道是新加的架构闸门（`check-public-boundary`、`check-layer-direction` 等，见 [Step-Code 第 2 章](../step-code/02-architecture-and-guardrails.md)）。**这是下游厂商在 pi 基座上明确补强的方向**，不是他们抄来的。
 
 pi 选择不做这件事是可以理解的——10 个包、三层深、依赖边清晰，靠 package.json 就够了。但这意味着**它的分层纪律随包数增长会线性劣化**，而下游 fork 后包数都涨了。
 
@@ -223,6 +223,6 @@ build → smoke-test-binaries → stage-github-release(draft) → publish-npm
 
 **pi 的工程纪律高度集中在两个地方：供应链，和"源码能直接跑"这个属性。** 前者有清晰的威胁建模（自己是 RCE 工具），后者是开发体验偏好，但两者都付出了真实的 CI 成本并坚持住了。
 
-**它明确没做的是架构守卫。** 没有 depcruise、没有导入边界 lint，分层只靠 package.json 和人。在 10 包三层的规模下这是合理取舍，但它解释了为什么下游厂商（Step-Code 16 道闸门、step-cli 13 条 depcruise 规则）在 fork 之后第一件事就是补这个——**他们的包数都涨了，而 pi 的保证方式不随规模扩展**。
+**它明确没做的是架构守卫。** 没有 depcruise、没有导入边界 lint，分层只靠 package.json 和人。在 10 包三层的规模下这是合理取舍，但它解释了为什么下游厂商（Step-Code 新加了 14 道闸门）在 fork 之后第一件事就是补这个——**包结构一重排，靠人维护的分层就守不住了，而 pi 的保证方式不随结构变化扩展**。
 
 最值得抄的单点：`check:browser-smoke` 那种**对产物内容做断言**的闸门，和 `announce` 必须在 `publish-npm` 之后的**版本可见性单调约束**。两者都不是"检查代码对不对"，而是"检查某个能力/承诺有没有被悄悄破坏"。

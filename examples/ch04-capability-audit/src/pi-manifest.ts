@@ -68,8 +68,13 @@ export const PI_MANIFEST: readonly Capability[] = [
   {
     id: "background-bash",
     name: "后台 bash",
-    // 只看工具实现：子 agent 的 run_in_background 不是后台 bash
-    present: [{ pattern: "run_in_background|runInBackground|background", paths: TOOLS, ignoreCase: true }],
+    // 先看 pi 放工具的目录；子 agent 的 run_in_background 不是后台 bash，所以不能全仓搜 background。
+    // fork 可能把 shell 工具挪到别处（Step-Code 的 run_command 在 step/tool-profile.ts），
+    // 再按「启动后台命令」这个动作兜底。
+    present: [
+      { pattern: "run_in_background|runInBackground|background", paths: TOOLS, ignoreCase: true },
+      inProduct("start_?background_?(command|bash|shell)", true),
+    ],
     declared: [inDocs("No background bash\\.")],
   },
 

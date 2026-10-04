@@ -40,4 +40,5 @@ examples/ch10-first-tool/
 | [`ch26-minimal-loop/`](./ch26-minimal-loop/) | 第 26 章 | 按 pi 三层切分写的最小 Agent 循环，零依赖 |
 | [`ch29-tool-batch/`](./ch29-tool-batch/) | 第 29 章 | 工具批次执行与按字节安全截断，零依赖 |
 | [`ch30-durable-tools/`](./ch30-durable-tools/) | 第 30 章 | 意图—结算日志、重启恢复、replay 策略、损坏即拒绝，零依赖 |
+| [`ch31-layer-gate/`](./ch31-layer-gate/) | 第 31 章 | 分层闸门：白名单配置（没列的边就是违规）、依赖图查环、认不出的内部目标失败关闭、报告带文件数与 import 数、`--self-test`，以及把判定函数换成坏的来测自测，零依赖 |
 
