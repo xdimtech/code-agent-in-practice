@@ -24,6 +24,7 @@ examples/ch10-first-tool/
 | [`ch03-modes/`](./ch03-modes/) | 第 3 章 | 四种形态选哪种：照抄 pi 的形态判定、五种形态的契约与换形态代价、严格 JSONL 分帧与 U+2028、真起假 RPC 子进程看对话框挂住、检查 json / rpc 录下的输出，零依赖 |
 | [`ch04-capability-audit/`](./ch04-capability-audit/) | 第 4 章 | 按能力清单把仓库归进五种状态，附 `file:line` 证据，与 fork 逐项对照，零依赖 |
 | [`ch05-route-filter/`](./ch05-route-filter/) | 第 5 章 | 该不该用 pi：四条路线 × 八个维度的事实表（每格带出处）、八个硬约束问题与 22 条排除 / 义务规则、不打分且顺序固定的过滤、在基准 commit 与公开文档上逐条核对出处的 `verify`，零依赖 |
+| [`ch06-cost-ledger/`](./ch06-cost-ledger/) | 第 6 章 | 成本与投入：照 pi 写的花费公式与缓存浪费扫描、同一会话按不缓存 / 5 分钟 / 1 小时重算、压缩的回本轮数与「从不压缩」对照、截断少付的钱、六个仓库的代码量与历史能读出什么，零依赖 |
 | [`ch07-hello-pi/`](./ch07-hello-pi/) | 第 7 章 | 30 分钟跑通 pi：环境体检（只打名字不打值）、脚本模型把每一轮收到的上下文摊开、读 `--mode json` 的事件流与按轮分组、会话目录名与磁盘留痕、在临时目录里真跑一次 pi，零依赖 |
 | [`ch08-extension-host/`](./ch08-extension-host/) | 第 8 章 | 按 pi 心智模型写的扩展宿主：工厂函数、注册即提交、失败回滚、通知容错、拦截 fail-closed、保留键，零依赖 |
 | [`ch09-api-lookup/`](./ch09-api-lookup/) | 第 9 章 | 扩展 API 反查：按任务找事件或 API、36 个事件的卡片、照 pi runner 写的 12 种合并方式模拟器、记录事件顺序的扩展与顺序检查器，零依赖 |

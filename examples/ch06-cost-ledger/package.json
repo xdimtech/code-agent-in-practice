@@ -1,0 +1,13 @@
+{
+  "name": "ch06-cost-ledger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 6 章：成本与投入——照 pi 写的花费公式与缓存浪费扫描、同一会话换缓存策略重算、压缩与截断的账、从代码量和 git 历史读投入（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts ledger",
+    "test": "node --experimental-strip-types --no-warnings --test test/pricing.test.ts test/session.test.ts test/cache-waste.test.ts test/what-if.test.ts test/compaction.test.ts test/truncation.test.ts test/effort.test.ts test/measure.test.ts test/main.test.ts"
+  }
+}
