@@ -1,6 +1,7 @@
 import { defineConfig } from "vitepress";
 import { withMermaid } from "vitepress-plugin-mermaid";
 import { buildSidebar } from "../scripts/summary.mjs";
+import { toAnchor } from "../scripts/anchor.mjs";
 
 const BASELINE = "pi b79e4cc8 (v0.84.4)";
 
@@ -54,6 +55,8 @@ export default withMermaid(
         detailsLabel: "展开",
       },
       image: { lazyLoading: true },
+      // 锚点与 GitHub 一致，正文里的 `#32-单步重试` 在站点和 GitHub 上都能跳
+      anchor: { slugify: toAnchor },
     },
 
     themeConfig: {

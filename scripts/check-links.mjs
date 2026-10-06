@@ -12,6 +12,7 @@ import { readFileSync, existsSync, statSync } from "node:fs";
 import { dirname, resolve, relative, join, extname } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
+import { toAnchor } from "./anchor.mjs";
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
@@ -27,17 +28,6 @@ function listMarkdown() {
     encoding: "utf8",
   });
   return out.split("\n").filter(Boolean);
-}
-
-/** 把 `## 3.1 主循环` 这类标题转成 GitHub 锚点 */
-export function toAnchor(heading) {
-  return heading
-    .trim()
-    .toLowerCase()
-    .replace(/[`*_~]/g, "")
-    .replace(/[^\p{Letter}\p{Number}\s-]/gu, "")
-    .trim()
-    .replace(/\s+/g, "-");
 }
 
 /** 去掉代码块后再找链接，否则示例代码里的路径会被当成真链接 */
