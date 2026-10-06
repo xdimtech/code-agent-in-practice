@@ -1,0 +1,13 @@
+{
+  "name": "ch32-runaway-guard",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 32 章：防跑飞——每轮新密钥的 HMAC 指纹、五类连击信号、一轮最多提醒一次且先占位再 steer、失败放行但记账、可选的硬步数上限、JSONL 轨迹回放（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test test/fingerprint.test.ts test/errors.test.ts test/detector.test.ts test/guard.test.ts test/config.test.ts test/replay.test.ts test/main.test.ts"
+  }
+}

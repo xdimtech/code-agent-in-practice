@@ -1,0 +1,4 @@
+{"calls": [{"id": "c1", "tool": "bash", "args": {"command": "npm run migrate"}}], "results": [{"id": "c1", "isError": true, "text": "connect ECONNREFUSED 127.0.0.1:5432"}]}
+{"calls": [{"id": "c2", "tool": "bash", "args": {"command": "npm run migrate"}}], "results": [{"id": "c2", "isError": true, "text": "Error: socket hang up"}]}
+{"calls": [{"id": "c3", "tool": "bash", "args": {"command": "npm run migrate"}}], "results": [{"id": "c3", "isError": true, "text": "network unreachable"}]}
+{"calls": [{"id": "c4", "tool": "bash", "args": {"command": "npm run migrate"}}], "results": [{"id": "c4", "isError": true, "text": "connection reset by peer"}]}

@@ -1,0 +1,6 @@
+{"calls": [{"id": "c1", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c1", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c2", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c2", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c3", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c3", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c4", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c4", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c5", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c5", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c6", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c6", "isError": false, "text": "export const port = 3000;"}]}

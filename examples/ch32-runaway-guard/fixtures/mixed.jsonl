@@ -1,0 +1,7 @@
+{"calls": [{"id": "c1", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c1", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c2", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c2", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "c3", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c3", "isError": false, "text": "export const port = 3000;"}]}
+{"calls": [{"id": "d4", "tool": "bash", "args": {"command": "curl -fsS localhost:8080/health"}}], "results": [{"id": "d4", "isError": true, "text": "request timed out after 5s"}]}
+{"calls": [{"id": "d5", "tool": "bash", "args": {"command": "curl -fsS localhost:8080/health"}}], "results": [{"id": "d5", "isError": true, "text": "curl: (28) Operation timed out"}]}
+{"calls": [{"id": "d6", "tool": "bash", "args": {"command": "curl -fsS localhost:8080/health"}}], "results": [{"id": "d6", "isError": true, "text": "deadline exceeded"}]}
+{"calls": [{"id": "c7", "tool": "read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c7", "isError": false, "text": "export const port = 3000;"}]}

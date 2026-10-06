@@ -1,0 +1,4 @@
+{"calls": [{"id": "c1", "tool": "bash", "args": {"command": "npm test -- --attempt 1"}}], "results": [{"id": "c1", "isError": true, "text": "3 failing tests (run 1)"}], "progress": [{"target": "npm test", "state": "3 failed / 40 passed"}]}
+{"calls": [{"id": "c2", "tool": "bash", "args": {"command": "npm test -- --attempt 2"}}], "results": [{"id": "c2", "isError": true, "text": "3 failing tests (run 2)"}], "progress": [{"target": "npm test", "state": "3 failed / 40 passed"}]}
+{"calls": [{"id": "c3", "tool": "bash", "args": {"command": "npm test -- --attempt 3"}}], "results": [{"id": "c3", "isError": true, "text": "3 failing tests (run 3)"}], "progress": [{"target": "npm test", "state": "3 failed / 40 passed"}]}
+{"calls": [{"id": "c4", "tool": "bash", "args": {"command": "npm test -- --attempt 4"}}], "results": [{"id": "c4", "isError": true, "text": "3 failing tests (run 4)"}], "progress": [{"target": "npm test", "state": "3 failed / 40 passed"}]}

@@ -1,0 +1,5 @@
+{"calls": [{"id": "c1", "tool": "task_output", "args": {"task_id": "t1"}}], "results": [{"id": "c1", "isError": false, "text": "status=running cursor=42"}]}
+{"calls": [{"id": "c2", "tool": "task_output", "args": {"task_id": "t1"}}], "results": [{"id": "c2", "isError": false, "text": "status=running cursor=42"}]}
+{"calls": [{"id": "c3", "tool": "task_output", "args": {"task_id": "t1"}}], "results": [{"id": "c3", "isError": false, "text": "status=running cursor=42"}]}
+{"calls": [{"id": "c4", "tool": "task_output", "args": {"task_id": "t1"}}], "results": [{"id": "c4", "isError": false, "text": "status=running cursor=42"}]}
+{"calls": [{"id": "c5", "tool": "task_output", "args": {"task_id": "t1"}}], "results": [{"id": "c5", "isError": false, "text": "status=succeeded cursor=80"}]}

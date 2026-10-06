@@ -1,0 +1,6 @@
+{"calls": [{"id": "c1", "tool": "edit", "args": {"path": "a.ts", "old": "x", "new": "y"}}], "results": [{"id": "c1", "isError": false, "text": "ok"}]}
+{"calls": [{"id": "c2", "tool": "edit", "args": {"path": "a.ts", "old": "y", "new": "x"}}], "results": [{"id": "c2", "isError": false, "text": "ok"}]}
+{"calls": [{"id": "c3", "tool": "edit", "args": {"path": "a.ts", "old": "x", "new": "y"}}], "results": [{"id": "c3", "isError": false, "text": "ok"}]}
+{"calls": [{"id": "c4", "tool": "edit", "args": {"path": "a.ts", "old": "y", "new": "x"}}], "results": [{"id": "c4", "isError": false, "text": "ok"}]}
+{"calls": [{"id": "c5", "tool": "edit", "args": {"path": "a.ts", "old": "x", "new": "y"}}], "results": [{"id": "c5", "isError": false, "text": "ok"}]}
+{"calls": [{"id": "c6", "tool": "edit", "args": {"path": "a.ts", "old": "y", "new": "x"}}], "results": [{"id": "c6", "isError": false, "text": "ok"}]}
