@@ -1,0 +1,6 @@
+{"calls": [{"id": "c1", "tool": "Read", "args": {"path": "src/a.ts"}}, {"id": "c2", "tool": "Read", "args": {"path": "src/b.ts"}}], "results": [{"id": "c1", "text": "ok", "isError": false}, {"id": "c2", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c3", "tool": "Read", "args": {"path": "src/a.ts"}}, {"id": "c4", "tool": "Read", "args": {"path": "src/b.ts"}}], "results": [{"id": "c3", "text": "ok", "isError": false}, {"id": "c4", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c5", "tool": "Read", "args": {"path": "src/a.ts"}}, {"id": "c6", "tool": "Read", "args": {"path": "src/b.ts"}}], "results": [{"id": "c5", "text": "ok", "isError": false}, {"id": "c6", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c7", "tool": "Read", "args": {"path": "src/a.ts"}}, {"id": "c8", "tool": "Read", "args": {"path": "src/b.ts"}}], "results": [{"id": "c7", "text": "ok", "isError": false}, {"id": "c8", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c9", "tool": "Read", "args": {"path": "src/a.ts"}}, {"id": "c10", "tool": "Read", "args": {"path": "src/b.ts"}}], "results": [{"id": "c9", "text": "ok", "isError": false}, {"id": "c10", "text": "ok", "isError": false}]}
+{"calls": []}

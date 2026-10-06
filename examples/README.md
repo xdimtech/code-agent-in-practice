@@ -43,4 +43,5 @@ examples/ch10-first-tool/
 | [`ch30-durable-tools/`](./ch30-durable-tools/) | 第 30 章 | 意图—结算日志、重启恢复、replay 策略、损坏即拒绝，零依赖 |
 | [`ch31-layer-gate/`](./ch31-layer-gate/) | 第 31 章 | 分层闸门：白名单配置（没列的边就是违规）、依赖图查环、认不出的内部目标失败关闭、报告带文件数与 import 数、`--self-test`，以及把判定函数换成坏的来测自测，零依赖 |
 | [`ch32-runaway-guard/`](./ch32-runaway-guard/) | 第 32 章 | 防跑飞：每轮新密钥的 HMAC 指纹、五类连击信号、一轮最多提醒一次且先占位再 steer、失败放行但记账、可选的硬步数上限、JSONL 轨迹回放当回归闸门，零依赖 |
+| [`ch33-repeat-breaker/`](./ch33-repeat-breaker/) | 第 33 章 | 会真停的重复调用断路器：3 / 5 / 8 逐级提醒、12 次真停、再给一步只许写字的交接（绕过步数上限）、同一步的重复共享结果但计数、截断参数按原文算键、交替检测（`--kimi` 关掉）、JSONL 轨迹回放当回归闸门，零依赖 |
 

@@ -25,7 +25,7 @@
 | [**pi**](./pi/) | earendil-works | **公共上游** | ✅ 完成（9 章） |
 | [Step-Code](./step-code/) | 阶跃星辰（公开） | 代码衍生 · 重构式 | ✅ 完成（9 章） |
 | [minimax-code](./minimax-code/) | MiniMax | 代码衍生 · 整栈 vendor | ✅ 完成（9 章） |
-| [kimi-code](./kimi-code/) | 月之暗面 | 代码衍生 · 仅 TUI | ⬜ 待开始 |
+| [kimi-code](./kimi-code/) | 月之暗面 | 代码衍生 · 仅 TUI | ✅ 完成（9 章） |
 | [deepseek-harness](./deepseek-harness/) | DeepSeek | **无功能依赖**（对照组） | ⬜ 待开始 |
 | [ZCode](./zcode/) | 智谱 Z.ai | **零接触**（对照组） | ⬜ 待开始 |
 

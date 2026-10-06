@@ -1,0 +1,3 @@
+{"calls": [{"id": "c1", "tool": "Bash", "args": {"command": "npm test"}}, {"id": "c2", "tool": "Bash", "args": {"command": "npm test"}}, {"id": "c3", "tool": "Bash", "args": {"command": "npm test"}}], "results": [{"id": "c1", "text": "1 failing", "isError": false}, {"id": "c2", "text": "1 failing", "isError": false}, {"id": "c3", "text": "1 failing", "isError": false}]}
+{"calls": [{"id": "c4", "tool": "Bash", "args": {"command": "npm test"}}], "results": [{"id": "c4", "text": "1 failing", "isError": false}]}
+{"calls": []}

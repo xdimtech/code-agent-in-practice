@@ -1,0 +1,13 @@
+{"calls": [{"id": "c1", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c1", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c2", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c2", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c3", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c3", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c4", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c4", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c5", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c5", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c6", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c6", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c7", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c7", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c8", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c8", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c9", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c9", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c10", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c10", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c11", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c11", "text": "export const app = 1;", "isError": false}]}
+{"calls": [{"id": "c12", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c12", "text": "export const app = 1;", "isError": false}]}
+{"calls": []}

@@ -1,0 +1,7 @@
+{"calls": [{"id": "c1", "tool": "Read", "args": {"path": "src/app.ts"}}], "results": [{"id": "c1", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c2", "tool": "Edit", "args": {"path": "src/app.ts", "old": "1", "new": "2"}}], "results": [{"id": "c2", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c3", "tool": "Bash", "args": {"command": "npm test"}}], "results": [{"id": "c3", "text": "1 failing", "isError": false}]}
+{"calls": [{"id": "c4", "tool": "Read", "args": {"path": "test/app.test.ts"}}], "results": [{"id": "c4", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c5", "tool": "Edit", "args": {"path": "test/app.test.ts", "old": "1", "new": "2"}}], "results": [{"id": "c5", "text": "ok", "isError": false}]}
+{"calls": [{"id": "c6", "tool": "Bash", "args": {"command": "npm test"}}], "results": [{"id": "c6", "text": "all passing", "isError": false}]}
+{"calls": []}

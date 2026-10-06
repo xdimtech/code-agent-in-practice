@@ -1,0 +1,5 @@
+{"calls": [{"id": "c1", "tool": "Write", "arguments": "{\"path\":\"src/big.ts\",\"content\""}], "results": [{"id": "c1", "text": "参数不是合法的 JSON", "isError": false}]}
+{"calls": [{"id": "c2", "tool": "Write", "arguments": "{\"path\":\"src/big.ts\",\"content\":\"export f"}], "results": [{"id": "c2", "text": "参数不是合法的 JSON", "isError": false}]}
+{"calls": [{"id": "c3", "tool": "Write", "arguments": "{\"path\":\"src/big.ts\",\"content\":\"export function ma"}], "results": [{"id": "c3", "text": "参数不是合法的 JSON", "isError": false}]}
+{"calls": [{"id": "c4", "tool": "Write", "arguments": "{\"path\":\"src/big.ts\",\"content\":\"export function main() { ret"}], "results": [{"id": "c4", "text": "参数不是合法的 JSON", "isError": false}]}
+{"calls": []}

@@ -1,0 +1,13 @@
+{
+  "name": "ch33-repeat-breaker",
+  "version": "1.0.0",
+  "private": true,
+  "description": "第 33 章：重复调用断路器——同一步去重共享结果、跨步连续计数、3/5/8 逐级提醒贴在结果后、12 次真停、再给一步只许写字的交接（绕过步数上限）、可选的交替检测、JSONL 轨迹回放（零依赖）",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22.6" },
+  "scripts": {
+    "start": "node --experimental-strip-types --no-warnings src/main.ts",
+    "test": "node --experimental-strip-types --no-warnings --test test/key.test.ts test/cycle.test.ts test/breaker.test.ts test/turn.test.ts test/replay.test.ts test/main.test.ts"
+  }
+}
